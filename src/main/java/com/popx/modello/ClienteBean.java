@@ -1,8 +1,8 @@
 package com.popx.modello;
 
 /*@
-  @ also
-  @ invariant true;
+  @ invariant this.getRole() == null
+  @        || this.getRole().equals("Cliente");
 @*/
 public class ClienteBean extends UserBean {
 
@@ -14,14 +14,48 @@ public class ClienteBean extends UserBean {
     @*/
     public ClienteBean() {}
 
+
     /*@
-      @ requires username != null && email != null && password != null && role != null;
+      @ also
+      @ requires username != null && !username.isEmpty();
+
+      @ requires email != null;
+      @ requires !email.isEmpty();
+      @ requires email.contains("@");
+      @ requires email.indexOf('@') > 0;
+      @ requires email.substring(email.indexOf('@') + 1).contains(".");
+      @ requires email.indexOf('.') > email.indexOf('@') + 1;
+      @ requires email.lastIndexOf('.') < email.length() - 1;
+
+      @ requires password != null;
+      @ requires password.length() >= 8 && password.length() <= 16;
+      @ requires (\exists int i; 0 <= i && i < password.length();
+                    Character.isLowerCase(password.charAt(i)));
+      @ requires (\exists int i; 0 <= i && i < password.length();
+                    Character.isUpperCase(password.charAt(i)));
+      @ requires (\exists int i; 0 <= i && i < password.length();
+                    Character.isDigit(password.charAt(i)));
+
+      @ requires role != null;
+      @ requires role.equals("Cliente");   // vincolo specifico di ClienteBean
+
       @ ensures this.getUsername().equals(username)
       @      && this.getEmail().equals(email)
       @      && this.getPassword().equals(password)
-      @      && this.getRole().equals(role);
+      @      && this.getRole().equals("Cliente");
     @*/
     public ClienteBean(String username, String email, String password, String role) {
-        super(username, email, password, role);
+        super(username, email, password, "Cliente");  // forza sempre "Cliente"
+    }
+
+
+    /*@
+      @ also
+      @ requires role.equals("Cliente");        // unica possibilità accettabile
+      @ ensures this.getRole().equals("Cliente");
+    @*/
+    @Override
+    public void setRole(String role) {
+        super.setRole("Cliente");  // ignora input e garantisce coerenza
     }
 }
