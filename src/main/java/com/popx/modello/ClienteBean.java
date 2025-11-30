@@ -2,7 +2,7 @@ package com.popx.modello;
 
 /*@
   @ invariant this.getRole() == null
-  @        || this.getRole().equals("Cliente");
+  @        || this.getRole().equals("User");
 @*/
 public class ClienteBean extends UserBean {
 
@@ -37,25 +37,14 @@ public class ClienteBean extends UserBean {
                     Character.isDigit(password.charAt(i)));
 
       @ requires role != null;
-      @ requires role.equals("Cliente");   // vincolo specifico di ClienteBean
+      @ requires role.equals("User");
 
       @ ensures this.getUsername().equals(username)
       @      && this.getEmail().equals(email)
       @      && this.getPassword().equals(password)
-      @      && this.getRole().equals("Cliente");
+      @      && this.getRole().equals("User");
     @*/
     public ClienteBean(String username, String email, String password, String role) {
-        super(username, email, password, "Cliente");  // forza sempre "Cliente"
-    }
-
-
-    /*@
-      @ also
-      @ requires role.equals("Cliente");        // unica possibilità accettabile
-      @ ensures this.getRole().equals("Cliente");
-    @*/
-    @Override
-    public void setRole(String role) {
-        super.setRole("Cliente");  // ignora input e garantisce coerenza
+        super(username, email, password, role); // JML richiede che role sia "User"
     }
 }

@@ -25,7 +25,7 @@ import java.io.Serializable;
 
   @ invariant role == null
       || role.equals("Gestore")
-      || role.equals("Cliente")
+      || role.equals("User")
       || role.equals("Admin");
 @*/
 public class UserBean implements Serializable {
@@ -65,7 +65,7 @@ public class UserBean implements Serializable {
 
       @ requires role != null;
       @ requires role.equals("Gestore")
-             || role.equals("Cliente")
+             || role.equals("User")
              || role.equals("Admin");
 
       @ ensures this.username.equals(username)
@@ -126,7 +126,7 @@ public class UserBean implements Serializable {
     /*@
       @ requires role != null;
       @ requires role.equals("Gestore")
-             || role.equals("Cliente")
+             || role.equals("User")
              || role.equals("Admin");
       @ ensures this.role.equals(role);
     @*/
