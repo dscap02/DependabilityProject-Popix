@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
 
+/*@ public invariant ds != null; @*/
 public class GestoreOrdineDAOImpl implements UserDAO<GestoreOrdineBean> {
 
     private static final DataSource ds;
@@ -21,6 +22,14 @@ public class GestoreOrdineDAOImpl implements UserDAO<GestoreOrdineBean> {
         }
     }
 
+    /*@
+      @ also
+      @ public normal_behavior
+      @ requires email != null && !email.isEmpty();
+      @ ensures \result == null
+      @      || \result.getEmail().equals(email);
+      @ signals (SQLException) true;
+      @*/
     @Override
     public GestoreOrdineBean getUserByEmail(String email) throws SQLException {
         String query = "SELECT * FROM UtenteRegistrato u " +
@@ -42,6 +51,14 @@ public class GestoreOrdineDAOImpl implements UserDAO<GestoreOrdineBean> {
         return null;
     }
 
+    /*@
+      @ also
+      @ public normal_behavior
+      @ requires user != null;
+      @ requires user.getEmail() != null && !user.getEmail().isEmpty();
+      @ ensures \result == true || \result == false;
+      @ signals (SQLException) true;
+      @*/
     @Override
     public boolean saveUser(GestoreOrdineBean user) throws SQLException {
         String userQuery = "INSERT INTO UtenteRegistrato (username, email, password, role) VALUES (?, ?, ?, ?)";
@@ -73,4 +90,3 @@ public class GestoreOrdineDAOImpl implements UserDAO<GestoreOrdineBean> {
         }
     }
 }
-

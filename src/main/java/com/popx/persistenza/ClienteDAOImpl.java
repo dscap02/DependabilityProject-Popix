@@ -2,23 +2,31 @@ package com.popx.persistenza;
 
 import com.popx.modello.ClienteBean;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/*@ public invariant ds != null; @*/
 public class ClienteDAOImpl implements UserDAO<ClienteBean> {
-    private  DataSource ds;
+    private DataSource ds;
 
-
+    /*@
+      @ ensures this.ds != null;
+      @*/
     public ClienteDAOImpl() {
         this.ds = DataSourceSingleton.getInstance();
     }
 
+    /*@
+      @ also
+      @ public normal_behavior
+      @ requires email != null && !email.isEmpty();
+      @ ensures \result == null
+      @      || \result.getEmail().equals(email);
+      @ signals (SQLException) true;
+      @*/
     @Override
     public ClienteBean getUserByEmail(String email) throws SQLException {
         String query = "SELECT * FROM UtenteRegistrato u " +
@@ -40,6 +48,14 @@ public class ClienteDAOImpl implements UserDAO<ClienteBean> {
         return null;
     }
 
+    /*@
+      @ also
+      @ public normal_behavior
+      @ requires user != null;
+      @ requires user.getEmail() != null && !user.getEmail().isEmpty();
+      @ ensures \result == true || \result == false;
+      @ signals (SQLException) true;
+      @*/
     @Override
     public boolean saveUser(ClienteBean user) throws SQLException {
         String userQuery = "INSERT INTO UtenteRegistrato (username, email, password, role) VALUES (?, ?, ?, ?)";
