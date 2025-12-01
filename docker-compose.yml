@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: popix-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./src/database:/docker-entrypoint-initdb.d
+    networks:
+      - popix-net
+
+  app:
+    build: .
+    container_name: popix-tomcat
+    environment:
+      POPIX_DB_URL: ${POPIX_DB_URL}
+      POPIX_DB_USER: ${MYSQL_USER}
+      POPIX_DB_PASS: ${MYSQL_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - popix-net
+
+volumes:
+  db_data:
+
+networks:
+  popix-net:
