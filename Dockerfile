@@ -39,8 +39,6 @@ COPY docker/tomcat/ROOT.xml /usr/local/tomcat/conf/Catalina/localhost/ROOT.xml
 # 4. Copia il driver MySQL (prende qualsiasi .jar trovato nella cartella preparata prima)
 COPY --from=build /app/target/lib/*.jar /usr/local/tomcat/lib/
 
-# NOTA: Non copiamo più setenv.sh per evitare conflitti.
-
 EXPOSE 8080
 
 CMD ["catalina.sh", "run"]
