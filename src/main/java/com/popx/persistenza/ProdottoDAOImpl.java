@@ -526,7 +526,29 @@ public class ProdottoDAOImpl implements ProdottoDAO {
         }
     }
 
+    /*@ public normal_behavior
+      @   requires productId1 != null && !productId1.isEmpty()
+      @        && productId2 != null && !productId2.isEmpty();
+      @   assignable \everything;
+      @   ensures \result ==> true || !\result;
+      @*/
+    public boolean isAssociatedWith(String productId1, String productId2) throws SQLException {
+        String query = "SELECT COUNT(*) FROM ProductAssociations WHERE product_id_1 = ? AND product_id_2 = ?";
 
+        try (Connection connection = ds.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, productId1);
+            preparedStatement.setString(2, productId2);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
 
 
 
