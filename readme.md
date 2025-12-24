@@ -1,13 +1,15 @@
 # Pop!x – Configuration & Build Guide
+[![CI](https://github.com/dscap02/DependabilityProject-Popix/actions/workflows/ci.yml/badge.svg)](https://github.com/dscap02/DependabilityProject-Popix/actions/workflows/ci.yml)
+
 
 ## Overview
 
 Pop!x is a Java web application developed using **Maven** and packaged as a **WAR** file.  
 The project is designed to be **buildable and executable both locally and in CI/CD environments**, using standard and reproducible tooling.
 
-The application can be built:
-- locally, using Maven
-- in a containerized environment, using Docker and Docker Compose
+The application supports:
+- local builds using Maven
+- containerized builds and execution using Docker and Docker Compose
 
 ---
 
@@ -15,7 +17,7 @@ The application can be built:
 
     .
     ├── pom.xml                 # Maven configuration
-    ├── Dockerfile              # Application container image
+    ├── Dockerfile              # Multi-stage Docker build (Maven + Tomcat)
     ├── docker-compose.yml      # Application + database orchestration
     ├── src/
     │   ├── main/               # Application source code
@@ -28,7 +30,7 @@ The application can be built:
 ## Requirements
 
 ### Local Build
-- Java JDK 17 or higher
+- Java JDK 21
 - Maven 3.8 or higher
 
 ### Containerized Build
@@ -60,7 +62,7 @@ This command produces the deployable artifact:
 
     target/popix-1.0-SNAPSHOT.war
 
-The generated WAR file can be deployed on any Servlet container compliant with the Jakarta EE specification (e.g. Apache Tomcat).
+The generated WAR file can be deployed on a servlet container compatible with the **Java EE / javax.servlet** specification, such as **Apache Tomcat 9**.
 
 ---
 
@@ -68,20 +70,36 @@ The generated WAR file can be deployed on any Servlet container compliant with t
 
 The application can also be built and executed in a fully isolated environment using Docker.
 
+### Dockerfile Overview
+
+The project includes a **multi-stage Dockerfile**:
+
+- **Build stage**
+    - Maven 3.9
+    - OpenJDK 21
+    - Compiles the application and produces the WAR artifact
+
+- **Runtime stage**
+    - Apache Tomcat 9
+    - OpenJDK 21
+    - Deploys the WAR as the ROOT application
+
+This approach ensures reproducible builds and consistency across local and containerized environments.
+
 ### Build Containers
 
     docker compose build
 
 This step:
 - builds the application Docker image
-- packages the application using Maven inside the container
+- executes the Maven build inside a controlled JDK 21 environment
 
 ### Run Application
 
     docker compose up
 
 This will start:
-- the application container (Tomcat)
+- the application container (Apache Tomcat)
 - the MySQL database container
 
 The database is automatically initialized using the SQL scripts located in:
@@ -104,30 +122,26 @@ Example variables:
 - `MYSQL_PASSWORD`
 - `MYSQL_DATABASE`
 
-These variables allow the same configuration approach to be reused both locally and in CI/CD pipelines.
+This configuration approach allows the same setup to be reused locally and in containerized environments.
 
 ---
 
 ## CI/CD Compatibility
 
-The project is fully compatible with CI/CD pipelines because:
+Continuous Integration is implemented using **GitHub Actions**.
 
-- it relies on **standard Maven commands**
-- the build is **fully automated**
-- no interactive or manual steps are required
-- no IDE-specific configuration is needed
-- all dependencies are declared in `pom.xml`
-- containerized builds run in isolated environments
+The repository includes a CI workflow (`.github/workflows/ci.yml`) that is triggered on every push and pull request to the `main` branch.  
+The pipeline:
+- sets up **Java 21**
+- runs the standard Maven build
+- executes automated tests
+- produces the WAR artifact
 
-A CI pipeline can build the project using either of the following commands:
+The CI pipeline runs the following command:
 
     mvn clean test package
 
-or
-
-    docker compose build
-
-Both approaches are reproducible and suitable for headless execution environments.
+Docker-based builds are supported locally as an alternative, reproducible build method, but they are not currently executed as part of the CI pipeline.
 
 ---
 
@@ -151,4 +165,4 @@ Pop!x is designed to be:
 - reproducible and automated
 - independent from development environments
 
-The use of Maven and Docker ensures portability, reliability, and ease of integration in continuous integration workflows.
+The use of Maven, Docker, and GitHub Actions ensures portability, reliability, and consistency across all supported execution environments.
