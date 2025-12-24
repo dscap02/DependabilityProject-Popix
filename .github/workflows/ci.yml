@@ -3,8 +3,15 @@ name: CI - Build and Test
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
 
 jobs:
   build:
@@ -23,10 +30,3 @@ jobs:
 
       - name: Build and test with Maven
         run: mvn -B clean test package
-
-      - name: Upload WAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: popix-war
-          path: target/*.war
-          if-no-files-found: error
