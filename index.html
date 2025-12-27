@@ -1,15 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Pop!x – JaCoCo Coverage Reports</title>
+    <meta charset="UTF-8">
+    <title>Pop!x – Code Coverage Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        ul {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Pop!x – JaCoCo Coverage Reports</h1>
-  <ul>
-    <li><a href="jacoco/baseline/index.html">Baseline coverage</a></li>
-    <li><a href="jacoco/after-service-tests/index.html">After service tests</a></li>
-    <li><a href="jacoco/final/index.html">Final coverage</a></li>
-  </ul>
+
+<h1>Pop!x – JaCoCo Code Coverage Evolution</h1>
+
+<p>
+    This page documents the evolution of <strong>code coverage</strong> for the Pop!x project.
+    Coverage reports are generated using <strong>JaCoCo</strong> and published as static artifacts
+    via <strong>GitHub Pages</strong>.
+</p>
+
+<p>
+    Reports are grouped by testing milestones to highlight the impact of different testing strategies
+    (unit and integration testing).
+</p>
+
+<h2>Coverage Reports</h2>
+<ul>
+    <li>
+        <a href="jacoco/baseline/index.html"><strong>Baseline</strong></a><br>
+        Initial coverage measured before introducing additional tests.
+    </li>
+    <li>
+        <a href="jacoco/after-unit-tests/index.html"><strong>After Unit Tests</strong></a><br>
+        Coverage after adding unit tests for the service layer.
+    </li>
+    <li>
+        <a href="jacoco/after-integration-tests/index.html"><strong>After Integration Tests</strong></a><br>
+        Coverage after introducing integration tests on the persistence layer.
+    </li>
+    <li>
+        <a href="jacoco/final/index.html"><strong>Final Coverage</strong></a><br>
+        Final coverage after completing all planned testing activities.
+    </li>
+</ul>
+
+<h2>Notes</h2>
+<p>
+    Coverage analysis includes only project-owned code and excludes third-party libraries
+    to ensure meaningful and academically valid metrics.
+</p>
+
 </body>
 </html>
