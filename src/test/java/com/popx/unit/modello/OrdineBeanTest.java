@@ -29,4 +29,19 @@ class OrdineBeanTest {
 
         assertNotNull(ordine.toString());
     }
+    @Test
+    void ordineBean_parameterizedConstructor_setsAllFields() {
+        Date data = new Date(System.currentTimeMillis());
+
+        OrdineBean ordine = new OrdineBean(
+                99.99f,
+                "cliente@example.com",
+                data
+        );
+
+        assertEquals(99.99f, ordine.getSubtotal(), 0.0001f);
+        assertEquals("cliente@example.com", ordine.getCustomerEmail());
+        assertEquals(data, ordine.getDataOrdine());
+    }
+
 }
