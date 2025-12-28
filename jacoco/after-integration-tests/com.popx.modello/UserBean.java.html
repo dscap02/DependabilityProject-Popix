@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserBean.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.modello</a> &gt; <span class="el_source">UserBean.java</span></div><h1>UserBean.java</h1><pre class="source lang-java linenums">package com.popx.modello;
+
+import java.io.Serializable;
+
+/*@
+  @ invariant username == null || !username.isEmpty();
+
+  @ invariant email == null
+      || (!email.isEmpty()
+          &amp;&amp; email.contains(&quot;@&quot;)
+          &amp;&amp; email.indexOf('@') &gt; 0
+          &amp;&amp; email.substring(email.indexOf('@') + 1).contains(&quot;.&quot;)
+          &amp;&amp; email.indexOf('.') &gt; email.indexOf('@') + 1
+          &amp;&amp; email.lastIndexOf('.') &lt; email.length() - 1);
+
+  @ invariant password == null
+      || (password.length() &gt;= 8
+          &amp;&amp; password.length() &lt;= 16
+          &amp;&amp; (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                Character.isLowerCase(password.charAt(i)))
+          &amp;&amp; (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                Character.isUpperCase(password.charAt(i)))
+          &amp;&amp; (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                Character.isDigit(password.charAt(i))));
+
+  @ invariant role == null
+      || role.equals(&quot;Gestore&quot;)
+      || role.equals(&quot;User&quot;)
+      || role.equals(&quot;Admin&quot;);
+@*/
+public class UserBean implements Serializable {
+
+    private String username;
+    private String email;
+    private String password;
+    private String role;
+
+    /*@
+      @ ensures this.username == null
+      @      &amp;&amp; this.email == null
+      @      &amp;&amp; this.password == null
+      @      &amp;&amp; this.role == null;
+    @*/
+<span class="fc" id="L44">    public UserBean() {}</span>
+
+    /*@
+      @ requires username != null &amp;&amp; !username.isEmpty();
+
+      @ requires email != null;
+      @ requires !email.isEmpty();
+      @ requires email.contains(&quot;@&quot;);
+      @ requires email.indexOf('@') &gt; 0;
+      @ requires email.substring(email.indexOf('@') + 1).contains(&quot;.&quot;);
+      @ requires email.indexOf('.') &gt; email.indexOf('@') + 1;
+      @ requires email.lastIndexOf('.') &lt; email.length() - 1;
+
+      @ requires password != null;
+      @ requires password.length() &gt;= 8 &amp;&amp; password.length() &lt;= 16;
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isLowerCase(password.charAt(i)));
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isUpperCase(password.charAt(i)));
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isDigit(password.charAt(i)));
+
+      @ requires role != null;
+      @ requires role.equals(&quot;Gestore&quot;)
+             || role.equals(&quot;User&quot;)
+             || role.equals(&quot;Admin&quot;);
+
+      @ ensures this.username.equals(username)
+      @      &amp;&amp; this.email.equals(email)
+      @      &amp;&amp; this.password.equals(password)
+      @      &amp;&amp; this.role.equals(role);
+    @*/
+<span class="fc" id="L76">    public UserBean(String username, String email, String password, String role) {</span>
+<span class="fc" id="L77">        this.username = username;</span>
+<span class="fc" id="L78">        this.email = email;</span>
+<span class="fc" id="L79">        this.password = password;</span>
+<span class="fc" id="L80">        this.role = role;</span>
+<span class="fc" id="L81">    }</span>
+
+    /*@ ensures \result == username; @*/
+<span class="fc" id="L84">    public String getUsername() { return username; }</span>
+
+    /*@
+      @ requires username != null &amp;&amp; !username.isEmpty();
+      @ ensures this.username.equals(username);
+    @*/
+<span class="fc" id="L90">    public void setUsername(String username) { this.username = username; }</span>
+
+    /*@ ensures \result == email; @*/
+<span class="fc" id="L93">    public String getEmail() { return email; }</span>
+
+    /*@
+      @ requires email != null;
+      @ requires !email.isEmpty();
+      @ requires email.contains(&quot;@&quot;);
+      @ requires email.indexOf('@') &gt; 0;
+      @ requires email.substring(email.indexOf('@') + 1).contains(&quot;.&quot;);
+      @ requires email.indexOf('.') &gt; email.indexOf('@') + 1;
+      @ requires email.lastIndexOf('.') &lt; email.length() - 1;
+      @ ensures this.email.equals(email);
+    @*/
+<span class="fc" id="L105">    public void setEmail(String email) { this.email = email; }</span>
+
+    /*@ ensures \result == password; @*/
+<span class="fc" id="L108">    public String getPassword() { return password; }</span>
+
+    /*@
+      @ requires password != null;
+      @ requires password.length() &gt;= 8 &amp;&amp; password.length() &lt;= 16;
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isLowerCase(password.charAt(i)));
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isUpperCase(password.charAt(i)));
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isDigit(password.charAt(i)));
+      @ ensures this.password.equals(password);
+    @*/
+<span class="fc" id="L121">    public void setPassword(String password) { this.password = password; }</span>
+
+    /*@ ensures \result == role; @*/
+<span class="fc" id="L124">    public String getRole() { return role; }</span>
+
+    /*@
+      @ requires role != null;
+      @ requires role.equals(&quot;Gestore&quot;)
+             || role.equals(&quot;User&quot;)
+             || role.equals(&quot;Admin&quot;);
+      @ ensures this.role.equals(role);
+    @*/
+<span class="fc" id="L133">    public void setRole(String role) { this.role = role; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

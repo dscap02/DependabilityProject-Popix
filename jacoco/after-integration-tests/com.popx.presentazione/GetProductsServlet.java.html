@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetProductsServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.presentazione</a> &gt; <span class="el_source">GetProductsServlet.java</span></div><h1>GetProductsServlet.java</h1><pre class="source lang-java linenums">package com.popx.presentazione;
+
+import com.popx.modello.ProdottoBean;
+import com.popx.persistenza.ProdottoDAO;
+import com.popx.persistenza.ProdottoDAOImpl;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.annotation.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+@WebServlet(name = &quot;GetProductsServlet&quot;, urlPatterns = {&quot;/getProductsServlet&quot;})
+<span class="nc" id="L15">public class GetProductsServlet extends HttpServlet {</span>
+
+<span class="nc" id="L17">    private final ProdottoDAO prodottoDAO = new ProdottoDAOImpl();</span>
+    private static final int PRODUCTS_PER_PAGE = 6;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+<span class="nc" id="L22">        String category = request.getParameter(&quot;category&quot;);</span>
+<span class="nc" id="L23">        String price = request.getParameter(&quot;price&quot;);</span>
+<span class="nc" id="L24">        String pageParam = request.getParameter(&quot;page&quot;);</span>
+
+        // Impostare la pagina corrente
+<span class="nc" id="L27">        int currentPage = 1;</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (pageParam != null) {</span>
+            try {
+<span class="nc" id="L30">                currentPage = Integer.parseInt(pageParam);</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">                if (currentPage &lt; 1) currentPage = 1;</span>
+<span class="nc" id="L32">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L33">                currentPage = 1;</span>
+<span class="nc" id="L34">            }</span>
+        }
+
+<span class="nc" id="L37">        List&lt;ProdottoBean&gt; prodotti = new ArrayList&lt;&gt;();</span>
+        try {
+            // Applicare i filtri di categoria e prezzo
+<span class="nc bnc" id="L40" title="All 4 branches missed.">            if (category != null &amp;&amp; !category.isEmpty()) {</span>
+<span class="nc bnc" id="L41" title="All 4 branches missed.">                if (price != null &amp;&amp; !price.isEmpty()) {</span>
+<span class="nc" id="L42">                    boolean ascending = &quot;low&quot;.equalsIgnoreCase(price);</span>
+<span class="nc" id="L43">                    prodotti = prodottoDAO.getProdottiByBrandAndPrice(category, ascending);</span>
+<span class="nc" id="L44">                } else {</span>
+<span class="nc" id="L45">                    prodotti = prodottoDAO.getProdottiByBrand(category);</span>
+                }
+<span class="nc bnc" id="L47" title="All 4 branches missed.">            } else if (price != null &amp;&amp; !price.isEmpty()) {</span>
+<span class="nc" id="L48">                boolean ascending = &quot;low&quot;.equalsIgnoreCase(price);</span>
+<span class="nc" id="L49">                prodotti = prodottoDAO.getProdottiSortedByPrice(ascending);</span>
+<span class="nc" id="L50">            } else {</span>
+<span class="nc" id="L51">                prodotti = prodottoDAO.getAllProducts(); // Se non ci sono filtri, recupera tutti i prodotti</span>
+            }
+
+            // Paginazione
+<span class="nc" id="L55">            int totalProducts = prodotti.size();</span>
+<span class="nc" id="L56">            int totalPages = (int) Math.ceil((double) totalProducts / PRODUCTS_PER_PAGE);</span>
+
+            // Assicurarsi che la pagina corrente non superi il numero massimo di pagine
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            if (currentPage &gt; totalPages) {</span>
+<span class="nc" id="L60">                currentPage = totalPages;</span>
+            }
+
+            // Calcolare i prodotti da mostrare per la pagina corrente
+<span class="nc" id="L64">            int start = (currentPage - 1) * PRODUCTS_PER_PAGE;</span>
+<span class="nc" id="L65">            int end = Math.min(start + PRODUCTS_PER_PAGE, totalProducts);</span>
+
+<span class="nc" id="L67">            List&lt;ProdottoBean&gt; productsForPage = prodotti.subList(start, end);</span>
+
+            // Aggiungere gli attributi alla request per essere usati nella JSP
+<span class="nc" id="L70">            request.setAttribute(&quot;products&quot;, productsForPage);</span>
+<span class="nc" id="L71">            request.setAttribute(&quot;currentPage&quot;, currentPage);</span>
+<span class="nc" id="L72">            request.setAttribute(&quot;totalPages&quot;, totalPages);</span>
+
+            // Invia la richiesta alla JSP
+<span class="nc" id="L75">            request.getRequestDispatcher(&quot;/jsp/Catalog.jsp&quot;).forward(request, response);</span>
+
+<span class="nc" id="L77">        } catch (Exception e) {</span>
+<span class="nc" id="L78">            e.printStackTrace();</span>
+<span class="nc" id="L79">            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, &quot;Errore durante il recupero dei prodotti.&quot;);</span>
+<span class="nc" id="L80">        }</span>
+<span class="nc" id="L81">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

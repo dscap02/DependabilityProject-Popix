@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UpdateCartServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.presentazione</a> &gt; <span class="el_source">UpdateCartServlet.java</span></div><h1>UpdateCartServlet.java</h1><pre class="source lang-java linenums">package com.popx.presentazione;
+
+import com.popx.persistenza.ProdottoDAOImpl;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.SQLException;
+
+@WebServlet(&quot;/UpdateCartServlet&quot;)
+<span class="nc" id="L15">public class UpdateCartServlet extends HttpServlet {</span>
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+<span class="nc" id="L18">        String productId = request.getParameter(&quot;productId&quot;);</span>
+        int qty;
+
+        try {
+<span class="nc" id="L22">            qty = Integer.parseInt(request.getParameter(&quot;qty&quot;));</span>
+<span class="nc" id="L23">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L24">            qty = 1; // Quantità predefinita</span>
+<span class="nc" id="L25">        }</span>
+
+<span class="nc" id="L27">        HttpSession session = request.getSession();</span>
+<span class="nc" id="L28">        ProdottoDAOImpl prodottoDao = new ProdottoDAOImpl();</span>
+
+        // Recupera l'email dell'utente
+<span class="nc" id="L31">        String userEmail = (String) session.getAttribute(&quot;userEmail&quot;);</span>
+
+        try {
+            // Aggiorna la quantità del prodotto nel carrello in sessione
+<span class="nc" id="L35">            prodottoDao.updateProductQtyInCart(session, productId, qty);</span>
+
+            // Se l'utente è loggato, aggiorna il carrello nel database
+<span class="nc bnc" id="L38" title="All 2 branches missed.">            if (userEmail != null) {</span>
+<span class="nc" id="L39">                prodottoDao.updateCartProductQuantityInDatabase(userEmail, productId, qty);</span>
+            }
+
+<span class="nc" id="L42">            response.setStatus(HttpServletResponse.SC_OK);</span>
+<span class="nc" id="L43">            response.getWriter().write(&quot;{\&quot;success\&quot;: true}&quot;);</span>
+<span class="nc" id="L44">        } catch (Exception e) {</span>
+<span class="nc" id="L45">            e.printStackTrace();</span>
+<span class="nc" id="L46">            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);</span>
+<span class="nc" id="L47">            response.getWriter().write(&quot;{\&quot;success\&quot;: false, \&quot;message\&quot;: \&quot;Errore nell'aggiornamento del carrello.\&quot;}&quot;);</span>
+<span class="nc" id="L48">        }</span>
+<span class="nc" id="L49">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

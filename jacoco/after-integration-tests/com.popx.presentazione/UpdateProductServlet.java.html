@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UpdateProductServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.presentazione</a> &gt; <span class="el_source">UpdateProductServlet.java</span></div><h1>UpdateProductServlet.java</h1><pre class="source lang-java linenums">package com.popx.presentazione;
+
+import com.google.gson.JsonObject;
+import com.popx.modello.ProdottoBean;
+import com.popx.persistenza.ProdottoDAOImpl;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.io.InputStream;
+
+@WebServlet(&quot;/updateProductServlet&quot;)
+@MultipartConfig(maxFileSize = 2 * 1024 * 1024) // Max file size 2MB
+<span class="nc" id="L16">public class UpdateProductServlet extends HttpServlet {</span>
+
+<span class="nc" id="L18">    private final ProdottoDAOImpl prodottoDAO = new ProdottoDAOImpl();</span>
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L23">        response.setContentType(&quot;application/json&quot;);</span>
+<span class="nc" id="L24">        JsonObject jsonResponse = new JsonObject();</span>
+
+        try {
+            // Recupero e validazione dei dati del prodotto
+<span class="nc" id="L28">            String idProduct = request.getParameter(&quot;idProduct&quot;);</span>
+<span class="nc" id="L29">            String name = request.getParameter(&quot;name&quot;);</span>
+<span class="nc" id="L30">            String description = request.getParameter(&quot;description&quot;);</span>
+<span class="nc" id="L31">            double price = Double.parseDouble(request.getParameter(&quot;price&quot;));</span>
+<span class="nc" id="L32">            int qty = Integer.parseInt(request.getParameter(&quot;qty&quot;));</span>
+<span class="nc" id="L33">            String brand = request.getParameter(&quot;brand&quot;);</span>
+<span class="nc" id="L34">            String figure = request.getParameter(&quot;figure&quot;);</span>
+<span class="nc" id="L35">            Part imgPart = request.getPart(&quot;img_src&quot;);</span>
+<span class="nc" id="L36">            String currentImgSrc = request.getParameter(&quot;current_img_src&quot;);</span>
+
+            // Creazione del prodotto da aggiornare
+<span class="nc" id="L39">            ProdottoBean prodotto = new ProdottoBean(idProduct, name, description, price, qty, brand, null, figure);</span>
+
+<span class="nc bnc" id="L41" title="All 4 branches missed.">            if (imgPart != null &amp;&amp; imgPart.getSize() &gt; 0) {</span>
+                // Se è stata caricata una nuova immagine
+<span class="nc bnc" id="L43" title="All 2 branches missed.">                if (imgPart.getContentType().startsWith(&quot;image/&quot;)) {</span>
+<span class="nc" id="L44">                    try (InputStream imgInputStream = imgPart.getInputStream()) {</span>
+<span class="nc" id="L45">                        byte[] imgBytes = imgInputStream.readAllBytes();</span>
+<span class="nc" id="L46">                        prodotto.setImg(imgBytes);</span>
+                    }
+                } else {
+<span class="nc" id="L49">                    jsonResponse.addProperty(&quot;success&quot;, false);</span>
+<span class="nc" id="L50">                    jsonResponse.addProperty(&quot;message&quot;, &quot;Il file caricato non è un'immagine valida.&quot;);</span>
+<span class="nc" id="L51">                    response.getWriter().write(jsonResponse.toString());</span>
+<span class="nc" id="L52">                    return;</span>
+                }
+<span class="nc bnc" id="L54" title="All 4 branches missed.">            } else if (currentImgSrc != null &amp;&amp; !currentImgSrc.isEmpty()) {</span>
+                // Se non è stata caricata una nuova immagine, utilizza quella esistente
+<span class="nc" id="L56">                ProdottoBean existingProduct = prodottoDAO.getProdottoById(idProduct);</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">                if (existingProduct != null) {</span>
+<span class="nc" id="L58">                    prodotto.setImg(existingProduct.getImg());</span>
+                }
+<span class="nc" id="L60">            } else {</span>
+                // Nessuna immagine presente
+<span class="nc" id="L62">                prodotto.setImg(null);</span>
+            }
+
+            // Aggiornamento del prodotto nel database
+<span class="nc" id="L66">            boolean isUpdated = prodottoDAO.updateProduct(prodotto);</span>
+
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            if (isUpdated) {</span>
+<span class="nc" id="L69">                jsonResponse.addProperty(&quot;success&quot;, true);</span>
+<span class="nc" id="L70">                jsonResponse.addProperty(&quot;message&quot;, &quot;Prodotto aggiornato con successo.&quot;);</span>
+            } else {
+<span class="nc" id="L72">                jsonResponse.addProperty(&quot;success&quot;, false);</span>
+<span class="nc" id="L73">                jsonResponse.addProperty(&quot;message&quot;, &quot;Errore durante l'aggiornamento del prodotto.&quot;);</span>
+            }
+<span class="nc" id="L75">        } catch (Exception e) {</span>
+<span class="nc" id="L76">            e.printStackTrace();</span>
+<span class="nc" id="L77">            jsonResponse.addProperty(&quot;success&quot;, false);</span>
+<span class="nc" id="L78">            jsonResponse.addProperty(&quot;message&quot;, &quot;Errore interno: &quot; + e.getMessage());</span>
+<span class="nc" id="L79">        }</span>
+
+<span class="nc" id="L81">        response.getWriter().write(jsonResponse.toString());</span>
+<span class="nc" id="L82">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

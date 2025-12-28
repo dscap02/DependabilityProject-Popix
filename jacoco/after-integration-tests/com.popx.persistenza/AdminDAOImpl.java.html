@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminDAOImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.persistenza</a> &gt; <span class="el_source">AdminDAOImpl.java</span></div><h1>AdminDAOImpl.java</h1><pre class="source lang-java linenums">package com.popx.persistenza;
+
+import com.popx.modello.AdminBean;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+/*@ public invariant ds != null; @*/
+<span class="nc" id="L15">public class AdminDAOImpl implements UserDAO&lt;AdminBean&gt; {</span>
+
+    private static final DataSource ds;
+
+    static {
+        try {
+<span class="nc" id="L21">            Context ctx = new InitialContext();</span>
+<span class="nc" id="L22">            Context env = (Context) ctx.lookup(&quot;java:comp/env&quot;);</span>
+<span class="nc" id="L23">            ds = (DataSource) env.lookup(&quot;jdbc/Popix&quot;);</span>
+<span class="nc" id="L24">        } catch (NamingException e) {</span>
+<span class="nc" id="L25">            throw new RuntimeException(e);</span>
+<span class="nc" id="L26">        }</span>
+<span class="nc" id="L27">    }</span>
+
+    /*@
+      @ also
+      @ public normal_behavior
+      @ requires email != null &amp;&amp; !email.isEmpty();
+      @ ensures \result == null
+      @      || \result.getEmail().equals(email);
+      @ signals (SQLException) true;
+      @*/
+    @Override
+    public AdminBean getUserByEmail(String email) throws SQLException {
+<span class="nc" id="L39">        String query = &quot;SELECT * FROM UtenteRegistrato u &quot; +</span>
+                &quot;JOIN Admin a ON u.email = a.utente_registrato_email &quot; +
+                &quot;WHERE u.email = ?&quot;;
+<span class="nc" id="L42">        try (Connection conn = ds.getConnection();</span>
+<span class="nc" id="L43">             PreparedStatement stmt = conn.prepareStatement(query)) {</span>
+<span class="nc" id="L44">            stmt.setString(1, email);</span>
+<span class="nc" id="L45">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L47">                return new AdminBean(</span>
+<span class="nc" id="L48">                        rs.getString(&quot;username&quot;),</span>
+<span class="nc" id="L49">                        rs.getString(&quot;email&quot;),</span>
+<span class="nc" id="L50">                        rs.getString(&quot;password&quot;),</span>
+<span class="nc" id="L51">                        rs.getString(&quot;role&quot;)</span>
+                );
+            }
+<span class="nc bnc" id="L54" title="All 4 branches missed.">        }</span>
+<span class="nc" id="L55">        return null;</span>
+    }
+
+    /*@
+      @ also
+      @ public normal_behavior
+      @ requires user != null;
+      @ requires user.getEmail() != null &amp;&amp; !user.getEmail().isEmpty();
+      @ ensures \result == true || \result == false;
+      @ signals (SQLException) true;
+      @*/
+    @Override
+    public boolean saveUser(AdminBean user) throws SQLException {
+<span class="nc" id="L68">        String userQuery = &quot;INSERT INTO UtenteRegistrato (username, email, password, role) VALUES (?, ?, ?, ?)&quot;;</span>
+<span class="nc" id="L69">        String adminQuery = &quot;INSERT INTO Admin (utente_registrato_email) VALUES (?)&quot;;</span>
+
+<span class="nc" id="L71">        try (Connection conn = ds.getConnection()) {</span>
+<span class="nc" id="L72">            conn.setAutoCommit(false);</span>
+<span class="nc" id="L73">            try (PreparedStatement userStmt = conn.prepareStatement(userQuery);</span>
+<span class="nc" id="L74">                 PreparedStatement adminStmt = conn.prepareStatement(adminQuery)) {</span>
+
+<span class="nc" id="L76">                userStmt.setString(1, user.getUsername());</span>
+<span class="nc" id="L77">                userStmt.setString(2, user.getEmail());</span>
+<span class="nc" id="L78">                userStmt.setString(3, com.popx.servizio.SecurityService.hashPassword(user.getPassword()));</span>
+<span class="nc" id="L79">                userStmt.setString(4, &quot;Admin&quot;);</span>
+<span class="nc" id="L80">                userStmt.executeUpdate();</span>
+
+<span class="nc" id="L82">                adminStmt.setString(1, user.getEmail());</span>
+<span class="nc" id="L83">                adminStmt.executeUpdate();</span>
+
+<span class="nc" id="L85">                conn.commit();</span>
+<span class="nc" id="L86">                return true;</span>
+<span class="nc" id="L87">            } catch (SQLException e) {</span>
+<span class="nc" id="L88">                conn.rollback();</span>
+<span class="nc" id="L89">                throw e;</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
