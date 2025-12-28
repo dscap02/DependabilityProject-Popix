@@ -4,8 +4,6 @@ import com.popx.modello.UserBean;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserDAOImpl implements UserDAO<UserBean> {
 
@@ -83,26 +81,4 @@ public class UserDAOImpl implements UserDAO<UserBean> {
         }
     }
 
-    /*@
-      @ public normal_behavior
-      @ ensures \result != null;
-      @ signals (SQLException) true;
-      @*/
-    public List<UserBean> getAllUsers() throws SQLException {
-        List<UserBean> users = new ArrayList<>();
-        String query = "SELECT * FROM UtenteRegistrato";
-        try (Connection conn = ds.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                users.add(new UserBean(
-                        rs.getString("username"),
-                        rs.getString("email"),
-                        rs.getString("password"),
-                        rs.getString("role")
-                ));
-            }
-        }
-        return users;
-    }
 }
