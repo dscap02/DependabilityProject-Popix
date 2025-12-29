@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClienteDAOImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.persistenza</a> &gt; <span class="el_source">ClienteDAOImpl.java</span></div><h1>ClienteDAOImpl.java</h1><pre class="source lang-java linenums">package com.popx.persistenza;
+
+import com.popx.modello.ClienteBean;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+/*@ public invariant ds != null; @*/
+public class ClienteDAOImpl implements UserDAO&lt;ClienteBean&gt; {
+    private DataSource ds;
+
+    /*@
+      @ ensures this.ds != null;
+      @*/
+<span class="nc" id="L18">    public ClienteDAOImpl() {</span>
+<span class="nc" id="L19">        this.ds = DataSourceSingleton.getInstance();</span>
+<span class="nc" id="L20">    }</span>
+
+    /*@
+      @ also
+      @ public normal_behavior
+      @ requires email != null &amp;&amp; !email.isEmpty();
+      @ ensures \result == null
+      @      || \result.getEmail().equals(email);
+      @ signals (SQLException) true;
+      @*/
+    @Override
+    public ClienteBean getUserByEmail(String email) throws SQLException {
+<span class="nc" id="L32">        String query = &quot;SELECT * FROM UtenteRegistrato u &quot; +</span>
+                &quot;JOIN Cliente c ON u.email = c.utente_registrato_email &quot; +
+                &quot;WHERE u.email = ?&quot;;
+<span class="nc" id="L35">        try (Connection conn = ds.getConnection();</span>
+<span class="nc" id="L36">             PreparedStatement stmt = conn.prepareStatement(query)) {</span>
+<span class="nc" id="L37">            stmt.setString(1, email);</span>
+<span class="nc" id="L38">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L40">                return new ClienteBean(</span>
+<span class="nc" id="L41">                        rs.getString(&quot;username&quot;),</span>
+<span class="nc" id="L42">                        rs.getString(&quot;email&quot;),</span>
+<span class="nc" id="L43">                        rs.getString(&quot;password&quot;),</span>
+<span class="nc" id="L44">                        rs.getString(&quot;role&quot;)</span>
+                );
+            }
+<span class="nc bnc" id="L47" title="All 4 branches missed.">        }</span>
+<span class="nc" id="L48">        return null;</span>
+    }
+
+    /*@
+      @ also
+      @ public normal_behavior
+      @ requires user != null;
+      @ requires user.getEmail() != null &amp;&amp; !user.getEmail().isEmpty();
+      @ ensures \result == true || \result == false;
+      @ signals (SQLException) true;
+      @*/
+    @Override
+    public boolean saveUser(ClienteBean user) throws SQLException {
+<span class="nc" id="L61">        String userQuery = &quot;INSERT INTO UtenteRegistrato (username, email, password, role) VALUES (?, ?, ?, ?)&quot;;</span>
+<span class="nc" id="L62">        String clienteQuery = &quot;INSERT INTO Cliente (utente_registrato_email) VALUES (?)&quot;;</span>
+
+<span class="nc" id="L64">        try (Connection conn = ds.getConnection()) {</span>
+<span class="nc" id="L65">            conn.setAutoCommit(false);</span>
+
+<span class="nc" id="L67">            try (PreparedStatement userStmt = conn.prepareStatement(userQuery);</span>
+<span class="nc" id="L68">                 PreparedStatement clienteStmt = conn.prepareStatement(clienteQuery)) {</span>
+
+                // Inserimento in UtenteRegistrato
+<span class="nc" id="L71">                userStmt.setString(1, user.getUsername());</span>
+<span class="nc" id="L72">                userStmt.setString(2, user.getEmail());</span>
+<span class="nc" id="L73">                userStmt.setString(3, com.popx.servizio.SecurityService.hashPassword(user.getPassword()));</span>
+<span class="nc" id="L74">                userStmt.setString(4, &quot;Cliente&quot;);</span>
+<span class="nc" id="L75">                userStmt.executeUpdate();</span>
+
+                // Inserimento in Cliente
+<span class="nc" id="L78">                clienteStmt.setString(1, user.getEmail());</span>
+<span class="nc" id="L79">                clienteStmt.executeUpdate();</span>
+
+<span class="nc" id="L81">                conn.commit();</span>
+<span class="nc" id="L82">                return true;</span>
+<span class="nc" id="L83">            } catch (SQLException e) {</span>
+<span class="nc" id="L84">                conn.rollback();</span>
+<span class="nc" id="L85">                throw e;</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

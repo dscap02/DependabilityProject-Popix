@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.servizio</a> &gt; <span class="el_source">SecurityService.java</span></div><h1>SecurityService.java</h1><pre class="source lang-java linenums">package com.popx.servizio;
+
+import org.mindrot.jbcrypt.BCrypt;
+
+<span class="fc" id="L5">public class SecurityService {</span>
+
+    /*@
+      @ public normal_behavior
+      @ requires password != null &amp;&amp; !password.isEmpty();
+      @
+      @ // L’hash è sempre non nullo e diverso dalla password in chiaro
+      @ ensures \result != null;
+      @ ensures !\result.equals(password);
+      @
+      @ // Un hash valido BCrypt inizia sempre con &quot;$2&quot;
+      @ ensures \result.startsWith(&quot;$2&quot;);
+      @*/
+    public static String hashPassword(String password) {
+<span class="fc" id="L19">        int costFactor = 12;</span>
+<span class="fc" id="L20">        String salt = BCrypt.gensalt(costFactor);</span>
+<span class="fc" id="L21">        return BCrypt.hashpw(password, salt);</span>
+    }
+
+    /*@
+      @ public normal_behavior
+      @ requires password != null &amp;&amp; !password.isEmpty();
+      @ requires hashedPassword != null &amp;&amp; !hashedPassword.isEmpty();
+      @
+      @ // L’output è sempre booleano
+      @ ensures \result == true || \result == false;
+      @*/
+    public static boolean checkPassword(String password, String hashedPassword) {
+<span class="fc" id="L33">        return BCrypt.checkpw(password, hashedPassword);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

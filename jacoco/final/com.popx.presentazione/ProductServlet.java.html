@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.presentazione</a> &gt; <span class="el_source">ProductServlet.java</span></div><h1>ProductServlet.java</h1><pre class="source lang-java linenums">package com.popx.presentazione;
+
+import com.google.gson.JsonObject;
+import com.popx.modello.ProdottoBean;
+import com.popx.persistenza.DataSourceSingleton;
+import com.popx.persistenza.ProdottoDAOImpl;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.IOException;
+import java.io.InputStream;
+
+@WebServlet(&quot;/addProductServlet&quot;)
+@MultipartConfig(maxFileSize = 2 * 1024 * 1024)
+public class ProductServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
+    private ProdottoDAOImpl prodottoDAO;
+
+    // 👉 costruttore production (Tomcat)
+<span class="nc" id="L27">    public ProductServlet() {</span>
+<span class="nc" id="L28">        this.prodottoDAO = new ProdottoDAOImpl(DataSourceSingleton.getInstance());</span>
+<span class="nc" id="L29">    }</span>
+
+    // 👉 costruttore test
+<span class="fc" id="L32">    public ProductServlet(ProdottoDAOImpl prodottoDAO) {</span>
+<span class="fc" id="L33">        this.prodottoDAO = prodottoDAO;</span>
+<span class="fc" id="L34">    }</span>
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+<span class="fc" id="L40">        response.setContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L41">        JsonObject jsonResponse = new JsonObject();</span>
+
+        try {
+<span class="fc" id="L44">            String id = request.getParameter(&quot;idProduct&quot;);</span>
+<span class="fc" id="L45">            String name = request.getParameter(&quot;name&quot;);</span>
+<span class="fc" id="L46">            String description = request.getParameter(&quot;description&quot;);</span>
+<span class="fc" id="L47">            String costStr = request.getParameter(&quot;price&quot;);</span>
+<span class="fc" id="L48">            String piecesInStockStr = request.getParameter(&quot;qty&quot;);</span>
+<span class="fc" id="L49">            String brand = request.getParameter(&quot;brand&quot;);</span>
+<span class="fc" id="L50">            String figure = request.getParameter(&quot;figure&quot;);</span>
+<span class="fc" id="L51">            Part imgPart = request.getPart(&quot;img_src&quot;);</span>
+
+<span class="pc bpc" id="L53" title="2 of 6 branches missed.">            if (id == null || id.isEmpty() ||</span>
+<span class="pc bpc" id="L54" title="2 of 4 branches missed.">                    name == null || name.isEmpty() ||</span>
+<span class="pc bpc" id="L55" title="2 of 4 branches missed.">                    costStr == null || costStr.isEmpty() ||</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                    piecesInStockStr == null || piecesInStockStr.isEmpty()) {</span>
+
+<span class="fc" id="L58">                jsonResponse.addProperty(&quot;success&quot;, false);</span>
+<span class="fc" id="L59">                jsonResponse.addProperty(&quot;message&quot;, &quot;Campi obbligatori mancanti.&quot;);</span>
+<span class="fc" id="L60">                response.getWriter().write(jsonResponse.toString());</span>
+<span class="fc" id="L61">                return;</span>
+            }
+
+<span class="fc" id="L64">            double cost = Double.parseDouble(costStr);</span>
+<span class="fc" id="L65">            int piecesInStock = Integer.parseInt(piecesInStockStr);</span>
+
+<span class="fc" id="L67">            byte[] imgBytes = null;</span>
+<span class="pc bpc" id="L68" title="1 of 4 branches missed.">            if (imgPart != null &amp;&amp; imgPart.getContentType().startsWith(&quot;image/&quot;)) {</span>
+<span class="fc" id="L69">                try (InputStream imgInputStream = imgPart.getInputStream()) {</span>
+<span class="fc" id="L70">                    imgBytes = imgInputStream.readAllBytes();</span>
+                }
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            } else if (imgPart != null) {</span>
+<span class="fc" id="L73">                jsonResponse.addProperty(&quot;success&quot;, false);</span>
+<span class="fc" id="L74">                jsonResponse.addProperty(&quot;message&quot;, &quot;Il file caricato non è un'immagine valida.&quot;);</span>
+<span class="fc" id="L75">                response.getWriter().write(jsonResponse.toString());</span>
+<span class="fc" id="L76">                return;</span>
+            }
+
+<span class="fc" id="L79">            ProdottoBean prodotto = new ProdottoBean(</span>
+                    id, name, description, cost, piecesInStock, brand, imgBytes, figure
+            );
+
+<span class="fc" id="L83">            boolean isSaved = prodottoDAO.saveProdotto(prodotto);</span>
+
+<span class="fc" id="L85">            jsonResponse.addProperty(&quot;success&quot;, isSaved);</span>
+<span class="fc" id="L86">            jsonResponse.addProperty(</span>
+                    &quot;message&quot;,
+<span class="fc bfc" id="L88" title="All 2 branches covered.">                    isSaved ? &quot;Prodotto aggiunto con successo.&quot; : &quot;Errore durante il salvataggio del prodotto.&quot;</span>
+            );
+
+<span class="nc" id="L91">        } catch (Exception e) {</span>
+<span class="nc" id="L92">            jsonResponse.addProperty(&quot;success&quot;, false);</span>
+<span class="nc" id="L93">            jsonResponse.addProperty(&quot;message&quot;, &quot;Errore interno.&quot;);</span>
+<span class="fc" id="L94">        }</span>
+
+<span class="fc" id="L96">        response.getWriter().write(jsonResponse.toString());</span>
+<span class="fc" id="L97">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
