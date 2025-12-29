@@ -6,13 +6,12 @@ import com.popx.servizio.AuthenticationService;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.*;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AuthenticationServiceIT {
+class AuthenticationServiceTest {
 
     private AuthenticationService authService;
 
