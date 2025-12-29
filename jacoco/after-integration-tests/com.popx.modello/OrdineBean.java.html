@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrdineBean.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.modello</a> &gt; <span class="el_source">OrdineBean.java</span></div><h1>OrdineBean.java</h1><pre class="source lang-java linenums">package com.popx.modello;
+
+import java.sql.Date;
+
+public class OrdineBean {
+
+    /*@ public invariant id &gt;= 0;
+      @ public invariant subtotal &gt;= 0;
+      @ public invariant customerEmail == null
+      @                 || !customerEmail.isEmpty();
+      @ public invariant status != null &amp;&amp; !status.isEmpty();
+      @ public invariant dataOrdine == null
+      @                 || dataOrdine.getTime() &gt;= 0;   // Data valida (non futura non esprimibile in JML)
+      @*/
+    private int id;
+    private float subtotal;
+    private String customerEmail;
+<span class="fc" id="L18">    private String status = &quot;In elaborazione&quot;;</span>
+    private Date dataOrdine;
+
+    /*@
+      @ ensures this.id == 0;
+      @ ensures this.subtotal == 0.0f;
+      @ ensures this.customerEmail == null;
+      @ ensures this.status.equals(&quot;In elaborazione&quot;);
+      @ ensures this.dataOrdine == null;
+      @*/
+<span class="fc" id="L28">    public OrdineBean() {}</span>
+
+    /*@
+      @ requires subtotal &gt;= 0;
+      @ requires customerEmail != null &amp;&amp; !customerEmail.isEmpty();
+      @ // dataOrdine può essere null
+      @ ensures this.id == 0;
+      @ ensures this.subtotal == subtotal;
+      @ ensures this.customerEmail == customerEmail;
+      @ ensures this.status.equals(&quot;In elaborazione&quot;);
+      @ ensures this.dataOrdine == dataOrdine;
+      @*/
+<span class="fc" id="L40">    public OrdineBean(float subtotal, String customerEmail, Date dataOrdine) {</span>
+<span class="fc" id="L41">        this.subtotal = subtotal;</span>
+<span class="fc" id="L42">        this.customerEmail = customerEmail;</span>
+<span class="fc" id="L43">        this.dataOrdine = dataOrdine;</span>
+<span class="fc" id="L44">    }</span>
+
+    /*@ ensures \result == id; @*/
+<span class="fc" id="L47">    public int getId() { return id; }</span>
+
+    /*@ requires id &gt;= 0;
+      @ ensures this.id == id;
+      @*/
+<span class="fc" id="L52">    public void setId(int id) { this.id = id; }</span>
+
+    /*@ ensures \result == subtotal; @*/
+<span class="fc" id="L55">    public float getSubtotal() { return subtotal; }</span>
+
+    /*@ requires subtotal &gt;= 0;
+      @ ensures this.subtotal == subtotal;
+      @*/
+<span class="fc" id="L60">    public void setSubtotal(float subtotal) { this.subtotal = subtotal; }</span>
+
+    /*@ ensures \result == customerEmail; @*/
+<span class="fc" id="L63">    public String getCustomerEmail() { return customerEmail; }</span>
+
+    /*@
+      @ requires customerEmail != null &amp;&amp; !customerEmail.isEmpty();
+      @ ensures this.customerEmail == customerEmail;
+      @*/
+    public void setCustomerEmail(String customerEmail) {
+<span class="fc" id="L70">        this.customerEmail = customerEmail;</span>
+<span class="fc" id="L71">    }</span>
+
+    /*@ ensures \result == status; @*/
+<span class="fc" id="L74">    public String getStatus() { return status; }</span>
+
+    /*@
+      @ requires status != null &amp;&amp; !status.isEmpty();
+      @ ensures this.status == status;
+      @*/
+<span class="fc" id="L80">    public void setStatus(String status) { this.status = status; }</span>
+
+    /*@ ensures \result == dataOrdine; @*/
+<span class="fc" id="L83">    public Date getDataOrdine() { return dataOrdine; }</span>
+
+    /*@
+      @ // dataOrdine può essere null
+      @ ensures this.dataOrdine == dataOrdine;
+      @*/
+    public void setDataOrdine(Date dataOrdine) {
+<span class="fc" id="L90">        this.dataOrdine = dataOrdine;</span>
+<span class="fc" id="L91">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RegistrationServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.presentazione</a> &gt; <span class="el_source">RegistrationServlet.java</span></div><h1>RegistrationServlet.java</h1><pre class="source lang-java linenums">package com.popx.presentazione;
+
+import com.popx.modello.UserBean;
+import com.popx.servizio.AuthenticationService;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet(&quot;/register&quot;)
+public class RegistrationServlet extends HttpServlet {
+
+    private final AuthenticationService authService;
+
+    // Costruttore usato in produzione
+<span class="nc" id="L19">    public RegistrationServlet() {</span>
+<span class="nc" id="L20">        this.authService = new AuthenticationService();</span>
+<span class="nc" id="L21">    }</span>
+
+    // Costruttore usato nei test (dependency injection)
+<span class="fc" id="L24">    public RegistrationServlet(AuthenticationService authService) {</span>
+<span class="fc" id="L25">        this.authService = authService;</span>
+<span class="fc" id="L26">    }</span>
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+<span class="fc" id="L32">        response.setContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L33">        response.setCharacterEncoding(&quot;UTF-8&quot;);</span>
+
+<span class="fc" id="L35">        String username = request.getParameter(&quot;username&quot;);</span>
+<span class="fc" id="L36">        String email = request.getParameter(&quot;email&quot;);</span>
+<span class="fc" id="L37">        String password = request.getParameter(&quot;password&quot;);</span>
+
+        try {
+<span class="fc bfc" id="L40" title="All 2 branches covered.">            if (authService.isEmailRegistered(email)) {</span>
+<span class="fc" id="L41">                response.getWriter().write(</span>
+                        &quot;{\&quot;status\&quot;:\&quot;error\&quot;,\&quot;message\&quot;:\&quot;Email già registrata.\&quot;}&quot;
+                );
+<span class="fc" id="L44">                return;</span>
+            }
+
+<span class="fc" id="L47">            UserBean user = new UserBean();</span>
+<span class="fc" id="L48">            user.setUsername(username);</span>
+<span class="fc" id="L49">            user.setEmail(email);</span>
+<span class="fc" id="L50">            user.setPassword(password);</span>
+<span class="fc" id="L51">            user.setRole(&quot;User&quot;);</span>
+
+<span class="fc" id="L53">            boolean registered = authService.registerUser(user);</span>
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (registered) {</span>
+<span class="fc" id="L56">                response.getWriter().write(</span>
+                        &quot;{\&quot;status\&quot;:\&quot;success\&quot;,\&quot;message\&quot;:\&quot;Registrazione avvenuta con successo.\&quot;,&quot;
+<span class="fc" id="L58">                                + &quot;\&quot;redirect\&quot;:\&quot;&quot; + request.getContextPath() + &quot;/jsp/HomePage.jsp\&quot;}&quot;</span>
+                );
+            } else {
+<span class="fc" id="L61">                response.getWriter().write(</span>
+                        &quot;{\&quot;status\&quot;:\&quot;error\&quot;,\&quot;message\&quot;:\&quot;Errore sconosciuto durante la registrazione.\&quot;}&quot;
+                );
+            }
+
+<span class="fc" id="L66">        } catch (Exception e) {</span>
+<span class="fc" id="L67">            response.getWriter().write(</span>
+<span class="fc" id="L68">                    &quot;{\&quot;status\&quot;:\&quot;error\&quot;,\&quot;message\&quot;:\&quot;&quot; + e.getMessage() + &quot;\&quot;}&quot;</span>
+            );
+<span class="fc" id="L70">        }</span>
+<span class="fc" id="L71">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

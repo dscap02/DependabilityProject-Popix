@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.servizio</a> &gt; <span class="el_source">AuthenticationService.java</span></div><h1>AuthenticationService.java</h1><pre class="source lang-java linenums">package com.popx.servizio;
+
+import com.popx.modello.UserBean;
+import com.popx.persistenza.UserDAO;
+import com.popx.persistenza.UserDAOImpl;
+
+/*@ public invariant userDAO != null; @*/
+public class AuthenticationService {
+
+    private UserDAO userDAO;
+
+    /*@ ensures this.userDAO != null; @*/
+<span class="fc" id="L13">    public AuthenticationService() {</span>
+        // Production / integration behavior (UNCHANGED)
+<span class="fc" id="L15">        this.userDAO = new UserDAOImpl();</span>
+<span class="fc" id="L16">    }</span>
+
+    /*@
+      @ requires userDAO != null;
+      @ ensures this.userDAO == userDAO;
+      @*/
+<span class="fc" id="L22">    public AuthenticationService(UserDAO userDAO) {</span>
+<span class="fc" id="L23">        this.userDAO = userDAO;</span>
+<span class="fc" id="L24">    }</span>
+
+    /*@
+      @ public normal_behavior
+      @ requires email != null &amp;&amp; !email.isEmpty();
+      @ requires password != null &amp;&amp; !password.isEmpty();
+      @
+      @ ensures \result != null ==&gt;
+      @      (\result.getEmail().equals(email));
+      @
+      @ signals (Exception e)
+      @      e.getMessage().equals(&quot;Invalid credentials&quot;);
+      @*/
+    public UserBean login(String email, String password) throws Exception {
+<span class="fc" id="L38">        UserBean user = userDAO.getUserByEmail(email);</span>
+
+<span class="fc bfc" id="L40" title="All 4 branches covered.">        if (user != null &amp;&amp; SecurityService.checkPassword(password, user.getPassword())) {</span>
+<span class="fc" id="L41">            return user;</span>
+        }
+<span class="fc" id="L43">        throw new Exception(&quot;Invalid credentials&quot;);</span>
+    }
+
+    /*@
+      @ public normal_behavior
+      @ requires user != null;
+      @ requires user.getEmail() != null &amp;&amp; !user.getEmail().isEmpty();
+      @
+      @ ensures \result == true || \result == false;
+      @ signals (Exception e)
+      @      e.getMessage().equals(&quot;User already exists&quot;);
+      @*/
+    public boolean registerUser(UserBean user) throws Exception {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (userDAO.getUserByEmail(user.getEmail()) == null) {</span>
+<span class="fc" id="L57">            return userDAO.saveUser(user);</span>
+        }
+<span class="fc" id="L59">        throw new Exception(&quot;User already exists&quot;);</span>
+    }
+
+    /*@
+      @ public normal_behavior
+      @ requires email != null &amp;&amp; !email.isEmpty();
+      @ ensures \result == true || \result == false;
+      @ signals (Exception) true;
+      @*/
+    public boolean isEmailRegistered(String email) throws Exception {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        return userDAO.getUserByEmail(email) != null;</span>
+    }
+
+    /*@
+      @ public normal_behavior
+      @ requires email != null &amp;&amp; !email.isEmpty();
+      @ ensures \result != null;
+      @ ensures \result.equals( userDAO.getUserByEmail(email).getRole() );
+      @ signals (Exception) true;
+      @*/
+    public String retrieveRole(String email) throws Exception {
+<span class="fc" id="L80">        UserBean user = userDAO.getUserByEmail(email);</span>
+<span class="fc" id="L81">        return user.getRole();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

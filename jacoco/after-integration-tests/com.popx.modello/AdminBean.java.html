@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminBean.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.modello</a> &gt; <span class="el_source">AdminBean.java</span></div><h1>AdminBean.java</h1><pre class="source lang-java linenums">package com.popx.modello;
+
+/*@
+  @ invariant this.getRole() == null
+  @        || this.getRole().equals(&quot;Admin&quot;);
+@*/
+public class AdminBean extends UserBean {
+
+    /*@
+     @ ensures this.getUsername() == null
+     @      &amp;&amp; this.getEmail() == null
+     @      &amp;&amp; this.getPassword() == null
+     @      &amp;&amp; this.getRole() == null;
+
+     */
+
+<span class="fc" id="L17">    public AdminBean() {}</span>
+
+    /*@
+      @ also
+      @ requires username != null &amp;&amp; !username.isEmpty();
+
+      @ requires email != null;
+      @ requires !email.isEmpty();
+      @ requires email.contains(&quot;@&quot;);
+      @ requires email.indexOf('@') &gt; 0;
+      @ requires email.substring(email.indexOf('@') + 1).contains(&quot;.&quot;);
+      @ requires email.indexOf('.') &gt; email.indexOf('@') + 1;
+      @ requires email.lastIndexOf('.') &lt; email.length() - 1;
+
+      @ requires password != null;
+      @ requires password.length() &gt;= 8 &amp;&amp; password.length() &lt;= 16;
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isLowerCase(password.charAt(i)));
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isUpperCase(password.charAt(i)));
+      @ requires (\exists int i; 0 &lt;= i &amp;&amp; i &lt; password.length();
+                    Character.isDigit(password.charAt(i)));
+
+      @ requires role != null;
+      @ requires role.equals(&quot;Admin&quot;);
+
+      @ ensures this.getUsername().equals(username)
+      @      &amp;&amp; this.getEmail().equals(email)
+      @      &amp;&amp; this.getPassword().equals(password)
+      @      &amp;&amp; this.getRole().equals(&quot;Admin&quot;);
+    @*/
+    public AdminBean(String username, String email, String password, String role) {
+<span class="fc" id="L49">        super(username, email, password, role);</span>
+<span class="fc" id="L50">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

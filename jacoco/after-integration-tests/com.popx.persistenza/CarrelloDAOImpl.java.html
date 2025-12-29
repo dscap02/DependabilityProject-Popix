@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CarrelloDAOImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.persistenza</a> &gt; <span class="el_source">CarrelloDAOImpl.java</span></div><h1>CarrelloDAOImpl.java</h1><pre class="source lang-java linenums">package com.popx.persistenza;
+
+import com.popx.modello.CarrelloBean;
+import com.popx.modello.ProdottoCarrelloBean;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.*;
+
+public class CarrelloDAOImpl implements CarrelloDAO {
+    private DataSource ds;
+
+    /*@ public model boolean available;
+      @ public invariant ds != null &amp;&amp; available;
+      @ represents available &lt;- ds != null;
+      @*/
+
+<span class="fc" id="L17">    public CarrelloDAOImpl() {</span>
+<span class="fc" id="L18">        this.ds = DataSourceSingleton.getInstance();</span>
+<span class="fc" id="L19">    }</span>
+
+
+    /*@ public normal_behavior
+      @   requires carrello != null
+      @        &amp;&amp; carrello.getClienteEmail() != null &amp;&amp; !carrello.getClienteEmail().isEmpty()
+      @        &amp;&amp; carrello.getProdottiCarrello() != null
+      @        &amp;&amp; (\forall int i; 0 &lt;= i &amp;&amp; i &lt; carrello.getProdottiCarrello().size();
+      @              carrello.getProdottiCarrello().get(i) != null
+      @           &amp;&amp; carrello.getProdottiCarrello().get(i).getProdottoId() != null
+      @           &amp;&amp; !carrello.getProdottiCarrello().get(i).getProdottoId().isEmpty()
+      @           &amp;&amp; carrello.getProdottiCarrello().get(i).getQuantity() &gt;= 0
+      @           &amp;&amp; carrello.getProdottiCarrello().get(i).getUnitaryCost() &gt;= 0);
+      @   assignable \everything;
+      @   ensures available;
+      @*/
+    @Override
+    public void salvaCarrello(CarrelloBean carrello) {
+<span class="fc" id="L37">        String upsertCart =</span>
+                &quot;INSERT INTO Carrello (cliente_email) VALUES (?) &quot; +
+                        &quot;ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)&quot;;
+
+<span class="fc" id="L41">        String insertProdottoCarrello =</span>
+                &quot;INSERT INTO ProdottoCarrello (carrello_id, prodotto_id, quantity, unitary_cost) &quot; +
+                        &quot;VALUES (?, ?, ?, ?) &quot; +
+                        &quot;ON DUPLICATE KEY UPDATE quantity = VALUES(quantity), unitary_cost = VALUES(unitary_cost)&quot;;
+
+<span class="fc" id="L46">        try (Connection connection = ds.getConnection()) {</span>
+<span class="fc" id="L47">            connection.setAutoCommit(false);</span>
+
+            int carrelloId;
+
+            // 1) Inserisci (o recupera) il carrello e ottieni l'id
+<span class="fc" id="L52">            try (PreparedStatement psCart = connection.prepareStatement(upsertCart, Statement.RETURN_GENERATED_KEYS)) {</span>
+<span class="fc" id="L53">                psCart.setString(1, carrello.getClienteEmail());</span>
+<span class="fc" id="L54">                psCart.executeUpdate();</span>
+
+<span class="fc" id="L56">                try (ResultSet keys = psCart.getGeneratedKeys()) {</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                    if (keys.next()) {</span>
+<span class="fc" id="L58">                        carrelloId = keys.getInt(1);</span>
+                    } else {
+<span class="nc" id="L60">                        throw new SQLException(&quot;Impossibile ottenere l'ID del carrello.&quot;);</span>
+                    }
+                }
+            }
+
+            // 2) Inserisci/aggiorna prodotti del carrello (batch)
+<span class="fc" id="L66">            try (PreparedStatement psProd = connection.prepareStatement(insertProdottoCarrello)) {</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                for (ProdottoCarrelloBean prodotto : carrello.getProdottiCarrello()) {</span>
+<span class="fc" id="L68">                    psProd.setInt(1, carrelloId);</span>
+<span class="fc" id="L69">                    psProd.setString(2, prodotto.getProdottoId());</span>
+<span class="fc" id="L70">                    psProd.setInt(3, prodotto.getQuantity());</span>
+<span class="fc" id="L71">                    psProd.setFloat(4, prodotto.getUnitaryCost());</span>
+<span class="fc" id="L72">                    psProd.addBatch();</span>
+<span class="fc" id="L73">                }</span>
+<span class="fc" id="L74">                psProd.executeBatch();</span>
+            }
+
+<span class="fc" id="L77">            connection.commit();</span>
+
+<span class="nc" id="L79">        } catch (SQLException e) {</span>
+<span class="nc" id="L80">            e.printStackTrace();</span>
+<span class="fc" id="L81">        }</span>
+<span class="fc" id="L82">    }</span>
+
+
+    @Override
+    /*@ public normal_behavior
+      @   requires email != null &amp;&amp; !email.isEmpty();
+      @   assignable \everything;
+      @   ensures \result != null
+      @        &amp;&amp; \result.getClienteEmail().equals(email)
+      @        &amp;&amp; \result.getProdottiCarrello() != null
+      @        &amp;&amp; (\forall int i; 0 &lt;= i &amp;&amp; i &lt; \result.getProdottiCarrello().size();
+      @              \result.getProdottiCarrello().get(i) != null
+      @           &amp;&amp; \result.getProdottiCarrello().get(i).getProdottoId() != null
+      @           &amp;&amp; !\result.getProdottiCarrello().get(i).getProdottoId().isEmpty()
+      @           &amp;&amp; \result.getProdottiCarrello().get(i).getQuantity() &gt;= 0
+      @           &amp;&amp; \result.getProdottiCarrello().get(i).getUnitaryCost() &gt;= 0);
+      @*/
+    public CarrelloBean ottieniCarrelloPerEmail(String email) {
+<span class="fc" id="L100">        String queryCarrello = &quot;SELECT * FROM Carrello WHERE cliente_email = ?&quot;;</span>
+<span class="fc" id="L101">        String queryProdotti = &quot;SELECT * FROM ProdottoCarrello WHERE carrello_id = ?&quot;;</span>
+
+<span class="fc" id="L103">        CarrelloBean carrello = null;</span>
+<span class="fc" id="L104">        List&lt;ProdottoCarrelloBean&gt; prodottiCarrello = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L106">        try (Connection connection = ds.getConnection()) {</span>
+            // Recupera il carrello
+<span class="fc" id="L108">            try (PreparedStatement psCarrello = connection.prepareStatement(queryCarrello)) {</span>
+<span class="fc" id="L109">                psCarrello.setString(1, email);</span>
+<span class="fc" id="L110">                ResultSet rsCarrello = psCarrello.executeQuery();</span>
+
+<span class="fc bfc" id="L112" title="All 2 branches covered.">                if (rsCarrello.next()) {</span>
+                    // Recupera l'ID del carrello
+<span class="fc" id="L114">                    int carrelloId = rsCarrello.getInt(&quot;id&quot;);</span>
+
+                    // Recupera i prodotti associati al carrello
+<span class="fc" id="L117">                    try (PreparedStatement psProdotti = connection.prepareStatement(queryProdotti)) {</span>
+<span class="fc" id="L118">                        psProdotti.setInt(1, carrelloId);</span>
+<span class="fc" id="L119">                        ResultSet rsProdotti = psProdotti.executeQuery();</span>
+
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                        while (rsProdotti.next()) {</span>
+<span class="fc" id="L122">                            ProdottoCarrelloBean prodotto = new ProdottoCarrelloBean(</span>
+                                    email,
+<span class="fc" id="L124">                                    rsProdotti.getString(&quot;prodotto_id&quot;),</span>
+<span class="fc" id="L125">                                    rsProdotti.getInt(&quot;quantity&quot;),</span>
+<span class="fc" id="L126">                                    rsProdotti.getFloat(&quot;unitary_cost&quot;)</span>
+                            );
+<span class="fc" id="L128">                            prodottiCarrello.add(prodotto);</span>
+<span class="fc" id="L129">                        }</span>
+                    }
+
+                    // Crea il carrello
+<span class="fc" id="L133">                    carrello = new CarrelloBean(email, prodottiCarrello);</span>
+                }
+            }
+<span class="nc" id="L136">        } catch (SQLException e) {</span>
+<span class="nc" id="L137">            e.printStackTrace();</span>
+<span class="fc" id="L138">        }</span>
+
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        return carrello != null ? carrello : new CarrelloBean(email, prodottiCarrello);</span>
+    }
+
+    @Override
+    /*@ public normal_behavior
+      @   requires email != null &amp;&amp; !email.isEmpty();
+      @   assignable \everything;
+      @   ensures available;
+      @*/
+    public void clearCartByUserEmail(String email) {
+<span class="fc" id="L150">        String queryProdottoCarrello = &quot;DELETE FROM ProdottoCarrello WHERE carrello_id = (SELECT id FROM Carrello WHERE cliente_email = ?)&quot;;</span>
+<span class="fc" id="L151">        String queryCarrello = &quot;DELETE FROM Carrello WHERE cliente_email = ?&quot;;</span>
+<span class="fc" id="L152">        Connection connection = null;</span>
+
+        try {
+<span class="fc" id="L155">            connection = ds.getConnection();</span>
+
+            // Avvia una transazione
+<span class="fc" id="L158">            connection.setAutoCommit(false);</span>
+
+<span class="fc" id="L160">            try (PreparedStatement psProdottoCarrello = connection.prepareStatement(queryProdottoCarrello)) {</span>
+<span class="fc" id="L161">                psProdottoCarrello.setString(1, email);</span>
+<span class="fc" id="L162">                psProdottoCarrello.executeUpdate();</span>
+            }
+
+<span class="fc" id="L165">            try (PreparedStatement psCarrello = connection.prepareStatement(queryCarrello)) {</span>
+<span class="fc" id="L166">                psCarrello.setString(1, email);</span>
+<span class="fc" id="L167">                psCarrello.executeUpdate();</span>
+            }
+
+            // Conferma la transazione
+<span class="fc" id="L171">            connection.commit();</span>
+
+<span class="nc" id="L173">        } catch (SQLException e) {</span>
+<span class="nc" id="L174">            e.printStackTrace();</span>
+            try {
+                // In caso di errore, esegui il rollback
+<span class="nc bnc" id="L177" title="All 2 branches missed.">                if (connection != null) {</span>
+<span class="nc" id="L178">                    connection.rollback();</span>
+                }
+<span class="nc" id="L180">            } catch (SQLException rollbackEx) {</span>
+<span class="nc" id="L181">                rollbackEx.printStackTrace();</span>
+<span class="nc" id="L182">            }</span>
+        } finally {
+            try {
+                // Ripristina l'auto-commit
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">                if (connection != null) {</span>
+<span class="fc" id="L187">                    connection.setAutoCommit(true);</span>
+<span class="fc" id="L188">                    connection.close();</span>
+                }
+<span class="nc" id="L190">            } catch (SQLException ex) {</span>
+<span class="nc" id="L191">                ex.printStackTrace();</span>
+<span class="fc" id="L192">            }</span>
+        }
+<span class="fc" id="L194">    }</span>
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

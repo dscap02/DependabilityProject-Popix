@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddToCartServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.presentazione</a> &gt; <span class="el_source">AddToCartServlet.java</span></div><h1>AddToCartServlet.java</h1><pre class="source lang-java linenums">package com.popx.presentazione;
+
+import com.popx.modello.ProdottoBean;
+import com.popx.modello.UserBean;
+import com.popx.persistenza.*;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+@WebServlet(&quot;/addToCart&quot;)
+public class AddToCartServlet extends HttpServlet {
+
+    private final ProdottoDAO prodottoDAO;
+    private final UserDAO&lt;UserBean&gt; userDAO;
+
+    // 👉 costruttore production
+<span class="nc" id="L22">    public AddToCartServlet() {</span>
+<span class="nc" id="L23">        this.prodottoDAO = new ProdottoDAOImpl();</span>
+<span class="nc" id="L24">        this.userDAO = new UserDAOImpl();</span>
+<span class="nc" id="L25">    }</span>
+
+    // 👉 costruttore test
+<span class="fc" id="L28">    public AddToCartServlet(ProdottoDAO prodottoDAO, UserDAO&lt;UserBean&gt; userDAO) {</span>
+<span class="fc" id="L29">        this.prodottoDAO = prodottoDAO;</span>
+<span class="fc" id="L30">        this.userDAO = userDAO;</span>
+<span class="fc" id="L31">    }</span>
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+<span class="fc" id="L37">        String productId = request.getParameter(&quot;productId&quot;);</span>
+<span class="fc" id="L38">        int quantity = Integer.parseInt(request.getParameter(&quot;quantity&quot;));</span>
+
+<span class="fc" id="L40">        HttpSession session = request.getSession();</span>
+<span class="fc" id="L41">        String userEmail = (String) session.getAttribute(&quot;userEmail&quot;);</span>
+
+        // 🔐 controllo ruolo
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (userEmail != null) {</span>
+            try {
+<span class="fc" id="L46">                UserBean userBean = userDAO.getUserByEmail(userEmail);</span>
+<span class="pc bpc" id="L47" title="2 of 4 branches missed.">                if (userBean != null &amp;&amp; !&quot;User&quot;.equals(userBean.getRole())) {</span>
+<span class="fc" id="L48">                    writeJson(response, false,</span>
+                            &quot;Accesso negato: solo gli utenti con il ruolo 'User' possono aggiungere prodotti al carrello.&quot;);
+<span class="fc" id="L50">                    return;</span>
+                }
+<span class="fc" id="L52">            } catch (SQLException e) {</span>
+<span class="fc" id="L53">                writeJson(response, false, &quot;Errore interno durante il controllo dei permessi.&quot;);</span>
+<span class="fc" id="L54">                return;</span>
+<span class="nc" id="L55">            }</span>
+        }
+
+        // 🛒 carrello
+<span class="fc" id="L59">        List&lt;ProdottoBean&gt; cart = (List&lt;ProdottoBean&gt;) session.getAttribute(&quot;cart&quot;);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (cart == null) {</span>
+<span class="fc" id="L61">            cart = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L62">            session.setAttribute(&quot;cart&quot;, cart);</span>
+        }
+
+<span class="fc" id="L65">        ProdottoBean prodotto = prodottoDAO.getProdottoById(productId);</span>
+
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (prodotto == null) {</span>
+<span class="fc" id="L68">            writeJson(response, false, &quot;Errore nell'aggiungere il prodotto al carrello.&quot;);</span>
+<span class="fc" id="L69">            return;</span>
+        }
+
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        for (ProdottoBean cartItem : cart) {</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if (cartItem.getId().equals(prodotto.getId())) {</span>
+<span class="fc" id="L74">                int currentQty = prodottoDAO.getProductQtyInCart(session, productId);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                if (currentQty + quantity &lt;= prodotto.getPiecesInStock()) {</span>
+<span class="fc" id="L76">                    prodottoDAO.updateProductQtyInCart(session, productId, currentQty + quantity);</span>
+<span class="fc" id="L77">                    writeJson(response, true, &quot;Prodotto aggiunto al carrello!&quot;);</span>
+<span class="fc" id="L78">                    return;</span>
+                } else {
+<span class="fc" id="L80">                    writeJson(response, false, &quot;Quantità non disponibile nel magazzino.&quot;);</span>
+<span class="fc" id="L81">                    return;</span>
+                }
+            }
+<span class="nc" id="L84">        }</span>
+
+<span class="fc" id="L86">        cart.add(prodotto);</span>
+<span class="fc" id="L87">        prodottoDAO.updateProductQtyInCart(session, productId, quantity);</span>
+<span class="fc" id="L88">        writeJson(response, true, &quot;Prodotto aggiunto al carrello!&quot;);</span>
+<span class="fc" id="L89">    }</span>
+
+    private void writeJson(HttpServletResponse response, boolean success, String message) throws IOException {
+<span class="fc" id="L92">        response.setContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L93">        response.getWriter()</span>
+<span class="fc" id="L94">                .write(&quot;{\&quot;success\&quot;: &quot; + success + &quot;, \&quot;message\&quot;: \&quot;&quot; + message + &quot;\&quot;}&quot;);</span>
+<span class="fc" id="L95">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

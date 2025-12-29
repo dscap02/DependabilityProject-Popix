@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProdottoBean.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">popix</a> &gt; <a href="index.source.html" class="el_package">com.popx.modello</a> &gt; <span class="el_source">ProdottoBean.java</span></div><h1>ProdottoBean.java</h1><pre class="source lang-java linenums">package com.popx.modello;
+
+import java.io.Serializable;
+import java.util.Arrays;
+
+public class ProdottoBean implements Serializable {
+    /*@ public invariant id != null &amp;&amp; !id.isEmpty();
+      @ public invariant name != null &amp;&amp; !name.isEmpty();
+      @ public invariant brand != null &amp;&amp; !brand.isEmpty();
+      @ public invariant cost &gt;= 0;
+      @ public invariant piecesInStock &gt;= 0;
+      @ public invariant qty &gt;= 0;
+      @ // img, figure e description possono essere null o vuote
+      @*/
+
+    private static final long serialVersionUID = 1L;
+
+    private String id;
+    private String name;
+    private String description;
+    private double cost;
+    private int piecesInStock;
+    private String brand;
+    private byte[] img;
+    private String figure;
+
+    private int qty;
+
+    // Constructors
+
+    /*@ ensures id == null &amp;&amp; name == null &amp;&amp; description == null &amp;&amp; cost == 0.0
+      @      &amp;&amp; piecesInStock == 0 &amp;&amp; brand == null &amp;&amp; img == null &amp;&amp; figure == null
+      @      &amp;&amp; qty == 0;
+      @*/
+<span class="fc" id="L35">    public ProdottoBean() {</span>
+<span class="fc" id="L36">    }</span>
+
+    /*@ requires id != null &amp;&amp; !id.isEmpty();
+      @ requires name != null &amp;&amp; !name.isEmpty();
+      @ requires brand != null &amp;&amp; !brand.isEmpty();
+      @ requires cost &gt;= 0;
+      @ requires piecesInStock &gt;= 0;
+      @ // description, img, figure possono essere null
+      @ ensures this.id == id;
+      @ ensures this.name == name;
+      @ ensures this.description == description;
+      @ ensures this.cost == cost;
+      @ ensures this.piecesInStock == piecesInStock;
+      @ ensures this.brand == brand;
+      @ ensures this.img == img;
+      @ ensures this.figure == figure;
+      @*/
+<span class="fc" id="L53">    public ProdottoBean(String id, String name, String description, double cost, int piecesInStock, String brand, byte[] img, String figure) {</span>
+<span class="fc" id="L54">        this.id = id;</span>
+<span class="fc" id="L55">        this.name = name;</span>
+<span class="fc" id="L56">        this.description = description;</span>
+<span class="fc" id="L57">        this.cost = cost;</span>
+<span class="fc" id="L58">        this.piecesInStock = piecesInStock;</span>
+<span class="fc" id="L59">        this.brand = brand;</span>
+<span class="fc" id="L60">        this.img = img;</span>
+<span class="fc" id="L61">        this.figure = figure;</span>
+<span class="fc" id="L62">    }</span>
+
+    /*@ ensures \result == id; @*/
+    public String getId() {
+<span class="fc" id="L66">        return id;</span>
+    }
+
+    /*@ requires id != null &amp;&amp; !id.isEmpty();
+      @ ensures this.id == id;
+      @*/
+    public void setId(String id) {
+<span class="fc" id="L73">        this.id = id;</span>
+<span class="fc" id="L74">    }</span>
+
+    /*@ ensures \result == name; @*/
+    public String getName() {
+<span class="fc" id="L78">        return name;</span>
+    }
+
+    /*@ requires name != null &amp;&amp; !name.isEmpty();
+      @ ensures this.name == name;
+      @*/
+    public void setName(String name) {
+<span class="fc" id="L85">        this.name = name;</span>
+<span class="fc" id="L86">    }</span>
+
+    /*@ ensures \result == description; @*/
+    public String getDescription() {
+<span class="fc" id="L90">        return description;</span>
+    }
+
+    /*@ // description può essere null o vuota
+      @ ensures this.description == description;
+      @*/
+    public void setDescription(String description) {
+<span class="fc" id="L97">        this.description = description;</span>
+<span class="fc" id="L98">    }</span>
+
+    /*@ ensures \result == cost; @*/
+    public double getCost() {
+<span class="fc" id="L102">        return cost;</span>
+    }
+
+    /*@ requires cost &gt;= 0;
+      @ ensures this.cost == cost;
+      @*/
+    public void setCost(double cost) {
+<span class="fc" id="L109">        this.cost = cost;</span>
+<span class="fc" id="L110">    }</span>
+
+    /*@ ensures \result == piecesInStock; @*/
+    public int getPiecesInStock() {
+<span class="fc" id="L114">        return piecesInStock;</span>
+    }
+
+    /*@ requires piecesInStock &gt;= 0;
+      @ ensures this.piecesInStock == piecesInStock;
+      @*/
+    public void setPiecesInStock(int piecesInStock) {
+<span class="fc" id="L121">        this.piecesInStock = piecesInStock;</span>
+<span class="fc" id="L122">    }</span>
+
+    /*@ ensures \result == brand; @*/
+    public String getBrand() {
+<span class="fc" id="L126">        return brand;</span>
+    }
+
+    /*@ requires brand != null &amp;&amp; !brand.isEmpty();
+      @ ensures this.brand == brand;
+      @*/
+    public void setBrand(String brand) {
+<span class="fc" id="L133">        this.brand = brand;</span>
+<span class="fc" id="L134">    }</span>
+
+    /*@ ensures \result == img; @*/
+    public byte[] getImg() {
+<span class="fc" id="L138">        return img;</span>
+    }
+
+    /*@ // img può essere null
+      @ ensures this.img == img;
+      @*/
+    public void setImg(byte[] img) {
+<span class="fc" id="L145">        this.img = img;</span>
+<span class="fc" id="L146">    }</span>
+
+    /*@ ensures \result == figure; @*/
+    public String getFigure() {
+<span class="fc" id="L150">        return figure;</span>
+    }
+
+    /*@ // figure può essere null o vuota
+      @ ensures this.figure == figure;
+      @*/
+    public void setFigure(String figure) {
+<span class="fc" id="L157">        this.figure = figure;</span>
+<span class="fc" id="L158">    }</span>
+
+    /*@ ensures \result == qty; @*/
+    public int getQty() {
+<span class="fc" id="L162">        return qty;</span>
+    }
+
+    /*@ requires qty &gt;= 0;
+      @ ensures this.qty == qty;
+      @*/
+    public void setQty(int qty) {
+<span class="fc" id="L169">        this.qty = qty;</span>
+<span class="fc" id="L170">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L174">        return &quot;ProdottoBean{&quot; +</span>
+                &quot;id='&quot; + id + '\'' +
+                &quot;, name='&quot; + name + '\'' +
+                &quot;, description='&quot; + description + '\'' +
+                &quot;, cost=&quot; + cost +
+                &quot;, piecesInStock=&quot; + piecesInStock +
+                &quot;, brand='&quot; + brand + '\'' +
+<span class="fc" id="L181">                &quot;, img=&quot; + Arrays.toString(img) +</span>
+                &quot;, figure='&quot; + figure + '\'' +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
