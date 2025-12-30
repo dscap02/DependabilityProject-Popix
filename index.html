@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pop!x – Code Coverage Reports</title>
+    <title>Pop!x – Test Coverage & Mutation Analysis</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,20 +20,22 @@
 </head>
 <body>
 
-<h1>Pop!x – JaCoCo Code Coverage Evolution</h1>
+<h1>Pop!x – Test Coverage and Mutation Analysis</h1>
 
 <p>
-    This page documents the evolution of <strong>code coverage</strong> for the Pop!x project.
-    Coverage reports are generated using <strong>JaCoCo</strong> and published as static artifacts
-    via <strong>GitHub Pages</strong>.
+    This page documents the evolution of <strong>test quality metrics</strong> for the Pop!x project.
+    Static analysis artifacts are published via <strong>GitHub Pages</strong> to ensure transparency
+    and reproducibility.
 </p>
+
+<!-- ===================== JACOCO ===================== -->
+
+<h2>JaCoCo – Code Coverage Evolution</h2>
 
 <p>
-    Reports are grouped by testing milestones to highlight the impact of different testing strategies
-    (unit and integration testing).
+    Code coverage reports are generated using <strong>JaCoCo</strong> and illustrate how coverage
+    evolves as different testing strategies are introduced (unit and integration testing).
 </p>
-
-<h2>Coverage Reports</h2>
 
 <ul>
     <li>
@@ -42,7 +44,7 @@
     </li>
     <li>
         <a href="jacoco/after-unit-tests/index.html">After unit tests</a>
-        – Current coverage after unit-level testing (service and model layers)
+        – Coverage after unit-level testing (model and service layers)
     </li>
     <li>
         <a href="jacoco/after-integration-tests/index.html">After integration tests</a>
@@ -54,11 +56,34 @@
     </li>
 </ul>
 
+<!-- ===================== PITEST ===================== -->
+
+<h2>PiTest – Mutation Testing Campaign</h2>
+
+<p>
+    Mutation testing was conducted using <strong>PiTest</strong> to evaluate the effectiveness
+    of the unit test suite in detecting injected faults.
+    Due to its computational cost, mutation analysis was executed as a dedicated campaign
+    rather than as part of the continuous integration pipeline.
+</p>
+
+<ul>
+    <li>
+        <a href="pitest/baseline/index.html">Baseline mutation analysis</a>
+        – Initial mutation testing campaign on the service layer
+    </li>
+    <li>
+        <a href="pitest/final/index.html">Final mutation analysis</a>
+        – Consolidated mutation testing results after test evaluation
+    </li>
+</ul>
 
 <h2>Notes</h2>
+
 <p>
-    Coverage analysis includes only project-owned code and excludes third-party libraries
-    to ensure meaningful and academically valid metrics.
+    Both coverage and mutation analysis include only project-owned code and intentionally exclude
+    third-party libraries and framework-dependent components to ensure meaningful and academically
+    valid metrics.
 </p>
 
 </body>
