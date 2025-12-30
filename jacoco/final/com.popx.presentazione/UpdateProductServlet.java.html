@@ -49,16 +49,16 @@ public class UpdateProductServlet extends HttpServlet {
                     new ProdottoBean(idProduct, name, description, price, qty, brand, null, figure);
 
             // 🔹 gestione immagine
-<span class="pc bpc" id="L52" title="1 of 4 branches missed.">            if (imgPart != null &amp;&amp; imgPart.getSize() &gt; 0) {</span>
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                if (!imgPart.getContentType().startsWith(&quot;image/&quot;)) {</span>
+<span class="fc bfc" id="L52" title="All 4 branches covered.">            if (imgPart != null &amp;&amp; imgPart.getSize() &gt; 0) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                if (!imgPart.getContentType().startsWith(&quot;image/&quot;)) {</span>
 <span class="fc" id="L54">                    jsonResponse.addProperty(&quot;success&quot;, false);</span>
 <span class="fc" id="L55">                    jsonResponse.addProperty(&quot;message&quot;, &quot;Il file caricato non è un'immagine valida.&quot;);</span>
 <span class="fc" id="L56">                    response.getWriter().write(jsonResponse.toString());</span>
 <span class="fc" id="L57">                    return;</span>
                 }
 
-<span class="nc" id="L60">                try (InputStream is = imgPart.getInputStream()) {</span>
-<span class="nc" id="L61">                    prodotto.setImg(is.readAllBytes());</span>
+<span class="fc" id="L60">                try (InputStream is = imgPart.getInputStream()) {</span>
+<span class="fc" id="L61">                    prodotto.setImg(is.readAllBytes());</span>
                 }
 <span class="pc bpc" id="L63" title="2 of 4 branches missed.">            } else if (currentImgSrc != null &amp;&amp; !currentImgSrc.isEmpty()) {</span>
 <span class="fc" id="L64">                ProdottoBean existing = prodottoDAO.getProdottoById(idProduct);</span>
