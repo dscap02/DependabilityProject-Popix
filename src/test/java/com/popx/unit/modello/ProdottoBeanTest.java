@@ -67,4 +67,18 @@ class ProdottoBeanTest {
 
         assertEquals(5, prodotto.getQty());
     }
+
+    @Test
+    void prodottoBean_toString_containsClassNameAndId() {
+        ProdottoBean prodotto = new ProdottoBean();
+        prodotto.setId("P001");
+        prodotto.setName("Test Product");
+
+        String result = prodotto.toString();
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertTrue(result.contains("ProdottoBean"));
+        assertTrue(result.contains("P001"));
+    }
 }
