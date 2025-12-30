@@ -151,6 +151,15 @@ class OrdineDAOImplTest {
 
         assertNotNull(all);
         assertEquals(2, all.size());
+
+        // verifica contenuto reale
+        OrdineBean first = all.get(0);
+
+        assertTrue(first.getId() > 0);
+        assertNotNull(first.getCustomerEmail());
+        assertNotNull(first.getStatus());
+        assertNotNull(first.getDataOrdine());
+        assertTrue(first.getSubtotal() > 0);
     }
 
     @Test
