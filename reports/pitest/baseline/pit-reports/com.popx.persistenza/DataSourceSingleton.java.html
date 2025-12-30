@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>DataSourceSingleton.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package com.popx.persistenza;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import javax.naming.Context;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import javax.naming.InitialContext;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import javax.naming.NamingException;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import javax.sql.DataSource;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>public class DataSourceSingleton {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    private static volatile DataSource instance;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>    private DataSourceSingleton() {}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    public static DataSource getInstance() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_14'/>
+14
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_14'>1</a>
+<span>
+1. getInstance : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        if (instance == null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>            synchronized (DataSourceSingleton.class) {</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_16'/>
+16
+</td>
+<td class='survived'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_16'>1</a>
+<span>
+1. getInstance : negated conditional &rarr; NO_COVERAGE<br/>
+
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class='survived'>                if (instance == null) {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>                    try {</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>                        Context initCtx = new InitialContext();</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>                        Context envCtx = (Context) initCtx.lookup(&#34;java:comp/env&#34;);</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_20'/>
+20
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_20'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>                        instance = (DataSource) envCtx.lookup(&#34;jdbc/Popix&#34;);</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_21'/>
+21
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_21'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>                    } catch (NamingException e) {</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>                        throw new RuntimeException(&#34;Error initializing DataSource&#34;, e);</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_23'/>
+23
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_23'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>                    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_24'/>
+24
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_24'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>                }</span></pre></td></tr>
+
+
+<tr>
+<td class='uncovered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='uncovered'><pre><span  class=''>            }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_26'/>
+26
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_26'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>        }</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_27'/>
+27
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_27'>1</a>
+<span>
+1. getInstance : replaced return value with null for com/popx/persistenza/DataSourceSingleton::getInstance &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        return instance;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_28'/>
+28
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_28'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_29'/>
+29
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_29'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_30'/>
+30
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_30'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    // Metodo aggiuntivo per impostare un DataSource mock</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_31'/>
+31
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_31'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    public static void setInstanceForTest(DataSource mockDataSource) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_32'/>
+32
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_32'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        instance = mockDataSource;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_33'/>
+33
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_33'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2fe152aa_34'/>
+34
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_34'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fe152aa_14'>14</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_14'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getInstance<br/><b>Killed by : </b>com.popx.integration.persistenza.RigaOrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.RigaOrdineDAOImplTest]</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fe152aa_16'>16</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_16'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getInstance<br/><b>Killed by : </b>none</span></span> negated conditional &rarr; NO_COVERAGE</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2fe152aa_27'>27</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2fe152aa_27'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getInstance<br/><b>Killed by : </b>com.popx.integration.persistenza.UserDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.UserDAOImplTest]/[method:getUserByEmail_userDoesNotExist_returnsNull()]</span></span> replaced return value with null for com/popx/persistenza/DataSourceSingleton::getInstance &rarr; KILLED</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+<li class='mutator'>CONDITIONALS_BOUNDARY</li>
+<li class='mutator'>EMPTY_RETURNS</li>
+<li class='mutator'>FALSE_RETURNS</li>
+<li class='mutator'>INCREMENTS</li>
+<li class='mutator'>INVERT_NEGS</li>
+<li class='mutator'>MATH</li>
+<li class='mutator'>NEGATE_CONDITIONALS</li>
+<li class='mutator'>NULL_RETURNS</li>
+<li class='mutator'>PRIMITIVE_RETURNS</li>
+<li class='mutator'>TRUE_RETURNS</li>
+<li class='mutator'>VOID_METHOD_CALLS</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+<li>com.popx.integration.persistenza.UserDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.UserDAOImplTest]/[method:getUserByEmail_userDoesNotExist_returnsNull()] (0 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:isAssociatedWith_true_whenAssociationExists()] (1 ms)</li><li>com.popx.integration.persistenza.OrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.OrdineDAOImplTest]/[method:getOrdineById_notExisting_returnsNull()] (1 ms)</li><li>com.popx.integration.persistenza.OrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.OrdineDAOImplTest]/[method:insertOrdine_persistsAndGeneratesId()] (0 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:isAssociatedWith_false_whenNoAssociation()] (3 ms)</li><li>com.popx.integration.persistenza.RigaOrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.RigaOrdineDAOImplTest]/[method:addAndGetRigaOrdine_success()] (0 ms)</li><li>com.popx.integration.persistenza.RigaOrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.RigaOrdineDAOImplTest]/[method:deleteRigaOrdine_removesRow()] (0 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:save_and_getProdottoById()] (1 ms)</li><li>com.popx.integration.persistenza.OrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.OrdineDAOImplTest]/[method:getOrdineById_existingOrder_returnsOrder()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:getProductImageById_returnsImage()] (2 ms)</li><li>com.popx.integration.persistenza.OrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.OrdineDAOImplTest]/[method:getAllOrdini_returnsAllInsertedOrders()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:deleteProductById_removesProduct()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:getProdottiSortedByPrice_ordersCorrectly()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:updateStock_updatesCorrectly()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:getProdottiByBrandAndPrice_ordersCorrectly()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:getProdottiByBrand_filtersCorrectly()] (1 ms)</li><li>com.popx.integration.persistenza.RigaOrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.RigaOrdineDAOImplTest]/[method:updateRigaOrdine_updatesValues()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:getRandomProducts_returnsLimited()] (1 ms)</li><li>com.popx.integration.persistenza.OrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.OrdineDAOImplTest]/[method:updateStatus_updatesCorrectly()] (2 ms)</li><li>com.popx.integration.persistenza.CarrelloDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.CarrelloDAOImplTest]/[method:salvaCarrello_e_ottieniCarrelloPerEmail_funzionano()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:getAllProducts_returnsAll()] (1 ms)</li><li>com.popx.integration.persistenza.OrdineDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.OrdineDAOImplTest]/[method:getOrdiniByCliente_returnsOnlyThatClientOrders()] (4 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:updateProduct_updatesMainTableEvenWithoutCart()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:removeProductFromCart_removesEntry()] (1 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:updateCartProductQuantityInDatabase_updatesQuantity()] (2 ms)</li><li>com.popx.integration.persistenza.ProdottoDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.ProdottoDAOImplTest]/[method:saveCartToDatabase_and_getCartByUserEmail()] (6 ms)</li><li>com.popx.integration.persistenza.CarrelloDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.CarrelloDAOImplTest]/[method:clearCartByUserEmail_rimuove_carrello_e_prodotti()] (11 ms)</li><li>com.popx.integration.persistenza.UserDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.UserDAOImplTest]/[method:saveUser_success_and_getUserByEmail_returnsUser()] (229 ms)</li><li>com.popx.integration.servizio.AuthenticationServiceTest.[engine:junit-jupiter]/[class:com.popx.integration.servizio.AuthenticationServiceTest]/[method:register_existingUser_fails()] (228 ms)</li><li>com.popx.integration.persistenza.UserDAOImplTest.[engine:junit-jupiter]/[class:com.popx.integration.persistenza.UserDAOImplTest]/[method:saveUser_duplicateEmail_throwsSQLException()] (430 ms)</li><li>com.popx.integration.servizio.AuthenticationServiceTest.[engine:junit-jupiter]/[class:com.popx.integration.servizio.AuthenticationServiceTest]/[method:registerAndLogin_successful()] (430 ms)</li><li>com.popx.integration.servizio.AuthenticationServiceTest.[engine:junit-jupiter]/[class:com.popx.integration.servizio.AuthenticationServiceTest]/[method:login_wrongPassword_fails()] (432 ms)</li>
+</ul>
+
+<br/>
+
+Report generated by <a href='https://pitest.org'>PIT</a> 1.15.2
+
+</body>
+</html>
