@@ -72,7 +72,7 @@ jobs:
         with:
           args: >
             -Dsonar.organization=dscap02
-            -Dsonar.projectKey=popix
+            -Dsonar.projectKey=dscap02_DependabilityProject-Popix
             -Dsonar.projectName=Pop!x
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
             -Dsonar.java.binaries=target/classes
