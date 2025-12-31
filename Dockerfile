@@ -5,21 +5,19 @@ FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-# 1. Copia solo il pom.xml e scarica le dipendenze (caching efficiente)
+# Copia il progetto
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# 2. Copia i sorgenti
 COPY src ./src
 
-# 3. Compila il pacchetto (senza test per velocità)
+# Build (senza test)
 RUN mvn clean package -DskipTests -B
 
-# 4. Estrae il driver MySQL in una cartella specifica (così non dobbiamo indovinare la versione)
+# Estrae il driver MySQL
 RUN mvn dependency:copy-dependencies \
     -DincludeGroupIds=com.mysql \
     -DincludeArtifactIds=mysql-connector-j \
     -DoutputDirectory=target/lib
+
 
 
 # ==========================================
