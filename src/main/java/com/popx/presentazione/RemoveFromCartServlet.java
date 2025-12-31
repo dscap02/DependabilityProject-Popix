@@ -14,7 +14,7 @@ import java.util.List;
 @WebServlet("/RemoveFromCartServlet")
 public class RemoveFromCartServlet extends HttpServlet {
 
-    private ProdottoDAO prodottoDAO;
+    private final ProdottoDAO prodottoDAO;
 
     // 👉 costruttore production
     public RemoveFromCartServlet() {

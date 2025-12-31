@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
-        if (isNaN(cost) || cost <= 0) {
+        if (Number.isNaN(cost) || cost <= 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'Errore di validazione',
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
-        if (isNaN(piecesInStock) || piecesInStock < 0) {
+        if (Number.isNaN(piecesInStock) || piecesInStock < 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'Errore di validazione',

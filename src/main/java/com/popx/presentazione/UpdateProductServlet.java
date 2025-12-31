@@ -15,7 +15,7 @@ import java.io.InputStream;
 @MultipartConfig(maxFileSize = 2 * 1024 * 1024)
 public class UpdateProductServlet extends HttpServlet {
 
-    private ProdottoDAOImpl prodottoDAO;
+    private final ProdottoDAOImpl prodottoDAO;
 
     // 🔹 costruttore production
     public UpdateProductServlet() {

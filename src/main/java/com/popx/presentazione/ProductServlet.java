@@ -5,7 +5,6 @@ import com.popx.modello.ProdottoBean;
 import com.popx.persistenza.DataSourceSingleton;
 import com.popx.persistenza.ProdottoDAOImpl;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,14 +13,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 
 @WebServlet("/addProductServlet")
 @MultipartConfig(maxFileSize = 2 * 1024 * 1024)
 public class ProductServlet extends HttpServlet {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    private ProdottoDAOImpl prodottoDAO;
+    private final ProdottoDAOImpl prodottoDAO;
 
     // 👉 costruttore production (Tomcat)
     public ProductServlet() {

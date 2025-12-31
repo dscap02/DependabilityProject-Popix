@@ -14,7 +14,7 @@ import java.sql.SQLException;
 @WebServlet("/DeleteProductServlet")
 public class DeleteProductServlet extends HttpServlet {
 
-    private ProdottoDAO prodottoDAO;
+    private final ProdottoDAO prodottoDAO;
 
     // 🔹 costruttore production
     public DeleteProductServlet() {

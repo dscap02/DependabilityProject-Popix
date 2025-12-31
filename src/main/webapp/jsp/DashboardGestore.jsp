@@ -4,7 +4,8 @@
 <%@ page import="com.popx.persistenza.*" %>
 <%@ page import="com.popx.modello.UserBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<!DOCTYPE html>
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,6 +16,24 @@
     <script>var contextPath = '<%= request.getContextPath() %>'</script>
     <script src="https://kit.fontawesome.com/892069e9ac.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Spostato qui per conformità: script inline necessario per updateStatus -->
+    <script>
+        function updateStatus(orderId) {
+            var newStatus = document.getElementById("statusSelect_" + orderId).value;
+            var url = contextPath + "/UpdateOrderStatus?id=" + orderId + "&status=" + newStatus;
+            fetch(url, { method: 'GET' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Successo', 'Status aggiornato!', 'success');
+                    } else {
+                        Swal.fire('Errore', 'Errore nell\'aggiornamento dello status.', 'error');
+                    }
+                });
+        }
+    </script>
+
     <title>Popix - Gestore Dashboard</title>
 </head>
 <body>
@@ -123,21 +142,6 @@
 
 <%@include file="/resources/templates/footer.jsp" %>
 
-<script>
-    function updateStatus(orderId) {
-        var newStatus = document.getElementById("statusSelect_" + orderId).value;
-        var url = contextPath + "/UpdateOrderStatus?id=" + orderId + "&status=" + newStatus;
-        fetch(url, { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire('Successo', 'Status aggiornato!', 'success');
-                } else {
-                    Swal.fire('Errore', 'Errore nell\'aggiornamento dello status.', 'error');
-                }
-            });
-    }
-</script>
 
 </body>
 </html>

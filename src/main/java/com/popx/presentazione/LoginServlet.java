@@ -14,7 +14,7 @@ import java.io.IOException;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-    private AuthenticationService authService;
+    private final AuthenticationService authService;
 
     // Costruttore usato in produzione
     public LoginServlet() {

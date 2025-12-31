@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<!DOCTYPE html>
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,6 +14,8 @@
     <title>Login</title>
 </head>
 <body>
+
+<%@include file="/resources/templates/header.jsp"%>
 
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="box-area row border rounded-5 p-4 bg-white shadow" style="max-width: 500px;">
@@ -41,6 +44,8 @@
         </form>
     </div>
 </div>
+
+<%@include file="/resources/templates/footer.jsp"%>
 
 </body>
 </html>

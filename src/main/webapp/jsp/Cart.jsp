@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.popx.modello.ProdottoBean" %>
@@ -5,7 +6,7 @@
 <%@ page import="com.popx.modello.UserBean" %>
 <%@ page import="com.popx.persistenza.UserDAOImpl" %>
 <%@ page import="com.popx.persistenza.UserDAO" %>
-<html>
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

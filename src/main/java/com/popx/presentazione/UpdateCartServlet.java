@@ -11,7 +11,7 @@ import java.io.IOException;
 @WebServlet("/UpdateCartServlet")
 public class UpdateCartServlet extends HttpServlet {
 
-    private ProdottoDAO prodottoDAO;
+    private final ProdottoDAO prodottoDAO;
 
     // 👉 costruttore production
     public UpdateCartServlet() {

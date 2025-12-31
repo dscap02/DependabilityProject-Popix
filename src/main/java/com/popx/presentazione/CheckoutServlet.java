@@ -13,10 +13,10 @@ import java.util.List;
 @WebServlet(name = "CheckoutServlet", value = "/CheckoutServlet")
 public class CheckoutServlet extends HttpServlet {
 
-    private CarrelloDAO carrelloDAO;
-    private OrdineDAO ordineDAO;
-    private RigaOrdineDAO rigaOrdineDAO;
-    private ProdottoDAO prodottoDAO;
+    private final CarrelloDAO carrelloDAO;
+    private final OrdineDAO ordineDAO;
+    private final RigaOrdineDAO rigaOrdineDAO;
+    private final ProdottoDAO prodottoDAO;
 
     // 👉 costruttore production
     public CheckoutServlet() {

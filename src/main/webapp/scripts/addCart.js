@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
         addToCartButton.addEventListener('click', function () {
             const productId = this.getAttribute('data-product-id');
             const quantityInput = document.getElementById('quantity');
-            const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+            const quantity = quantityInput ? Number.parseInt(quantityInput.value) : 1;
 
             if (quantity <= 0) {
                 Swal.fire('Errore', 'La quantità deve essere almeno 1.', 'error');

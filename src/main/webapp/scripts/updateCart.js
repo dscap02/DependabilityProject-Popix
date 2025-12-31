@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Trova il relativo input number
             const quantityInput = this.previousElementSibling; // Trova l'elemento input adiacente
-            const newQty = parseInt(quantityInput.value, 10);
+            const newQty = Number.parseInt(quantityInput.value, 10);
 
             if (newQty > 0) {
                 fetch(contextPath + '/UpdateCartServlet', {

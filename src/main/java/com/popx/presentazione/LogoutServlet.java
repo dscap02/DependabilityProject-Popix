@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
 
-    private ProdottoDAO prodottoDAO;
+    private final ProdottoDAO prodottoDAO;
     private static final Logger LOGGER = Logger.getLogger(LogoutServlet.class.getName());
 
     // produzione

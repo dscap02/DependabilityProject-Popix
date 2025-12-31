@@ -3,7 +3,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 
-<html>
+<!DOCTYPE html>
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,7 +24,10 @@
         var contextPath = '<%= request.getContextPath() %>';
     </script>
 
-    <title>Popix</title>
+    <title>Catalogo - Popix</title>
+
+    <!-- spostato qui per conformità: tutti gli script devono essere dichiarati nel <head> -->
+    <script src="${pageContext.request.contextPath}/scripts/cartHandler.js"></script>
 </head>
 
 <body>
@@ -168,7 +172,6 @@
 
 <%@ include file="/resources/templates/footer.jsp" %>
 
-<script src="${pageContext.request.contextPath}/scripts/cartHandler.js"></script>
 
 </body>
 </html>

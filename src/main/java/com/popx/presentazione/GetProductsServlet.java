@@ -8,14 +8,13 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "GetProductsServlet", urlPatterns = {"/getProductsServlet"})
 public class GetProductsServlet extends HttpServlet {
 
     private static final int PRODUCTS_PER_PAGE = 6;
-    private ProdottoDAO prodottoDAO;
+    private final ProdottoDAO prodottoDAO;
 
     // 🔹 costruttore production
     public GetProductsServlet() {
