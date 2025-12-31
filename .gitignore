@@ -17,8 +17,7 @@ target/
 dist/
 
 # Environment files
-*.env
-*.env.*
+.env
 
 # Windows thumbnail cache files
 Thumbs.db
