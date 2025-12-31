@@ -65,13 +65,14 @@ jobs:
           disable_search: true
           fail_ci_if_error: false
 
-      - name: SonarCloud analysis (bootstrap)
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: >
-          mvn -B sonar:sonar
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.organization=dscap02
-          -Dsonar.projectKey=popix
-          -Dsonar.projectName=Pop!x
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+        with:
+          args: >
+            -Dsonar.organization=dscap02
+            -Dsonar.projectKey=popix
+            -Dsonar.projectName=Pop!x
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.java.binaries=target/classes
