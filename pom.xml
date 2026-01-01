@@ -155,6 +155,7 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -162,6 +163,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
@@ -172,16 +174,33 @@
                             <includes>
                                 <include>com/popx/**</include>
                             </includes>
+                            <excludes>
+                                <exclude>com/popx/benchmark/**</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
 
             <!-- PiTest -->
             <plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
                 <version>1.15.2</version>
+
+                <configuration>
+                    <!-- Classi su cui fare mutation testing -->
+                    <targetClasses>
+                        <param>com.popx.*</param>
+                    </targetClasses>
+
+                    <!-- Escludi i benchmark JMH -->
+                    <excludedClasses>
+                        <param>com.popx.benchmark.*</param>
+                    </excludedClasses>
+                </configuration>
+
                 <dependencies>
                     <dependency>
                         <groupId>org.pitest</groupId>
@@ -190,6 +209,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
 
             <!-- Sonar -->
             <plugin>
