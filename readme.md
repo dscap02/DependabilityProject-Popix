@@ -292,3 +292,9 @@ Pop!x is designed to be:
 - independent from development environments
 
 The combined use of Maven, Docker, and GitHub Actions ensures portability, reliability, and consistency across all supported execution environments, aligning the project with software dependability best practices.
+
+## License
+
+This project is developed for academic purposes.
+No license is granted for reuse or redistribution.
+
