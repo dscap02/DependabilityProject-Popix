@@ -112,7 +112,7 @@ MYSQL_ROOT_PASSWORD=your_root_password
 MYSQL_DATABASE=Popix
 MYSQL_USER=popix
 MYSQL_PASSWORD=your_password
-POPIX_DB_URL=jdbc:mysql://db:3306/Popix?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+POPIX_DB_URL=jdbc:your_db_url
 
 ```
 Once the environment variables are configured, the Docker images can be built using:
