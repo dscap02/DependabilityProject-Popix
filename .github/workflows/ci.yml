@@ -11,6 +11,8 @@ on:
       - 'Dockerfile'
       - 'docker/**'
       - '.github/workflows/dockerhub.yml'
+      - 'src/jmh/**'
+
 
   pull_request:
     branches: [ "main" ]
@@ -22,6 +24,8 @@ on:
       - 'Dockerfile'
       - 'docker/**'
       - '.github/workflows/dockerhub.yml'
+      - 'src/jmh/**'
+
 
 permissions:
   contents: read
