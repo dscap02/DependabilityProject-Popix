@@ -14,7 +14,7 @@ import java.io.OutputStream;
 @WebServlet(name = &quot;GetPictureServlet&quot;, urlPatterns = {&quot;/getPictureServlet&quot;})
 public class GetPictureServlet extends HttpServlet {
 
-    private ProdottoDAO prodottoDAO;
+    private final ProdottoDAO prodottoDAO;
 
     // 🔹 costruttore production
 <span class="nc" id="L20">    public GetPictureServlet() {</span>

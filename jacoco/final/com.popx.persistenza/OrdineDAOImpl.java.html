@@ -6,19 +6,22 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class OrdineDAOImpl implements OrdineDAO {
 
     private DataSource ds;
+<span class="fc" id="L15">    private static final Logger LOGGER = Logger.getLogger(OrdineDAOImpl.class.getName());</span>
 
     /*@ public model boolean available;
       @ public invariant ds != null &amp;&amp; available;
       @ represents available &lt;- ds != null;
       @*/
 
-<span class="fc" id="L19">    public OrdineDAOImpl() {</span>
-<span class="fc" id="L20">        this.ds = DataSourceSingleton.getInstance();</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L22">    public OrdineDAOImpl() {</span>
+<span class="fc" id="L23">        this.ds = DataSourceSingleton.getInstance();</span>
+<span class="fc" id="L24">    }</span>
 
     @Override
     /*@ public normal_behavior
@@ -31,30 +34,30 @@ public class OrdineDAOImpl implements OrdineDAO {
       @   ensures \result ==&gt; ordine.getId() &gt; 0;
       @*/
     public boolean insertOrdine(OrdineBean ordine) {
-<span class="fc" id="L34">        String query = &quot;INSERT INTO Ordine (subtotal, customer_email, status, data_ordine) VALUES (?, ?, ?, ?)&quot;;</span>
+<span class="fc" id="L37">        String query = &quot;INSERT INTO Ordine (subtotal, customer_email, status, data_ordine) VALUES (?, ?, ?, ?)&quot;;</span>
 
-<span class="fc" id="L36">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L37">             PreparedStatement ps = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {</span>
+<span class="fc" id="L39">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L40">             PreparedStatement ps = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {</span>
 
-<span class="fc" id="L39">            ps.setFloat(1, ordine.getSubtotal());</span>
-<span class="fc" id="L40">            ps.setString(2, ordine.getCustomerEmail());</span>
-<span class="fc" id="L41">            ps.setString(3, ordine.getStatus());</span>
-<span class="fc" id="L42">            ps.setDate(4, new java.sql.Date(ordine.getDataOrdine().getTime()));</span>
+<span class="fc" id="L42">            ps.setFloat(1, ordine.getSubtotal());</span>
+<span class="fc" id="L43">            ps.setString(2, ordine.getCustomerEmail());</span>
+<span class="fc" id="L44">            ps.setString(3, ordine.getStatus());</span>
+<span class="fc" id="L45">            ps.setDate(4, new java.sql.Date(ordine.getDataOrdine().getTime()));</span>
 
-<span class="fc" id="L44">            int affectedRows = ps.executeUpdate();</span>
+<span class="fc" id="L47">            int affectedRows = ps.executeUpdate();</span>
 
             // Recupera l'ID auto-generato
-<span class="fc" id="L47">            ResultSet rs = ps.getGeneratedKeys();</span>
-<span class="pc bpc" id="L48" title="1 of 2 branches missed.">            if (rs.next()) {</span>
-<span class="fc" id="L49">                ordine.setId(rs.getInt(1));</span>
+<span class="fc" id="L50">            ResultSet rs = ps.getGeneratedKeys();</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            if (rs.next()) {</span>
+<span class="fc" id="L52">                ordine.setId(rs.getInt(1));</span>
             }
 
             // Restituisce true se sono state modificate righe (quindi l'inserimento è riuscito)
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            return affectedRows &gt; 0;</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            return affectedRows &gt; 0;</span>
 
-<span class="nc" id="L55">        } catch (SQLException e) {</span>
-<span class="nc" id="L56">            e.printStackTrace();</span>
-<span class="nc" id="L57">            return false; // Restituisce false in caso di errore</span>
+<span class="nc" id="L58">        } catch (SQLException e) {</span>
+<span class="nc" id="L59">            LOGGER.log(Level.SEVERE, &quot;SQL error in insertOrdine&quot;, e);</span>
+<span class="nc" id="L60">            return false; // Restituisce false in caso di errore</span>
         }
     }
 
@@ -66,29 +69,29 @@ public class OrdineDAOImpl implements OrdineDAO {
       @   ensures \result == null || \result.getId() == id;
       @*/
     public OrdineBean getOrdineById(int id) {
-<span class="fc" id="L69">        String query = &quot;SELECT * FROM Ordine WHERE id = ?&quot;;</span>
-<span class="fc" id="L70">        OrdineBean ordine = null;</span>
+<span class="fc" id="L72">        String query = &quot;SELECT * FROM Ordine WHERE id = ?&quot;;</span>
+<span class="fc" id="L73">        OrdineBean ordine = null;</span>
 
-<span class="fc" id="L72">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L73">             PreparedStatement ps = con.prepareStatement(query)) {</span>
+<span class="fc" id="L75">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L76">             PreparedStatement ps = con.prepareStatement(query)) {</span>
 
-<span class="fc" id="L75">            ps.setInt(1, id);</span>
-<span class="fc" id="L76">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L78">            ps.setInt(1, id);</span>
+<span class="fc" id="L79">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="fc bfc" id="L78" title="All 2 branches covered.">            if (rs.next()) {</span>
-<span class="fc" id="L79">                ordine = new OrdineBean();</span>
-<span class="fc" id="L80">                ordine.setId(rs.getInt(&quot;id&quot;));</span>
-<span class="fc" id="L81">                ordine.setSubtotal(rs.getFloat(&quot;subtotal&quot;));</span>
-<span class="fc" id="L82">                ordine.setCustomerEmail(rs.getString(&quot;customer_email&quot;));</span>
-<span class="fc" id="L83">                ordine.setStatus(rs.getString(&quot;status&quot;));</span>
-<span class="fc" id="L84">                ordine.setDataOrdine(rs.getDate(&quot;data_ordine&quot;));</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            if (rs.next()) {</span>
+<span class="fc" id="L82">                ordine = new OrdineBean();</span>
+<span class="fc" id="L83">                ordine.setId(rs.getInt(&quot;id&quot;));</span>
+<span class="fc" id="L84">                ordine.setSubtotal(rs.getFloat(&quot;subtotal&quot;));</span>
+<span class="fc" id="L85">                ordine.setCustomerEmail(rs.getString(&quot;customer_email&quot;));</span>
+<span class="fc" id="L86">                ordine.setStatus(rs.getString(&quot;status&quot;));</span>
+<span class="fc" id="L87">                ordine.setDataOrdine(rs.getDate(&quot;data_ordine&quot;));</span>
             }
 
-<span class="nc" id="L87">        } catch (SQLException e) {</span>
-<span class="nc" id="L88">            e.printStackTrace();</span>
-<span class="fc" id="L89">        }</span>
+<span class="nc" id="L90">        } catch (SQLException e) {</span>
+<span class="nc" id="L91">            LOGGER.log(Level.SEVERE, &quot;SQL error in getOrdineById&quot;, e);</span>
+<span class="fc" id="L92">        }</span>
 
-<span class="fc" id="L91">        return ordine;</span>
+<span class="fc" id="L94">        return ordine;</span>
     }
 
     @Override
@@ -97,28 +100,28 @@ public class OrdineDAOImpl implements OrdineDAO {
       @   ensures \result != null;
       @*/
     public List&lt;OrdineBean&gt; getAllOrdini() {
-<span class="fc" id="L100">        String query = &quot;SELECT * FROM Ordine&quot;;</span>
-<span class="fc" id="L101">        List&lt;OrdineBean&gt; ordini = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L103">        String query = &quot;SELECT * FROM Ordine&quot;;</span>
+<span class="fc" id="L104">        List&lt;OrdineBean&gt; ordini = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L103">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L104">             PreparedStatement ps = con.prepareStatement(query);</span>
-<span class="fc" id="L105">             ResultSet rs = ps.executeQuery()) {</span>
+<span class="fc" id="L106">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L107">             PreparedStatement ps = con.prepareStatement(query);</span>
+<span class="fc" id="L108">             ResultSet rs = ps.executeQuery()) {</span>
 
-<span class="fc bfc" id="L107" title="All 2 branches covered.">            while (rs.next()) {</span>
-<span class="fc" id="L108">                OrdineBean ordine = new OrdineBean();</span>
-<span class="fc" id="L109">                ordine.setId(rs.getInt(&quot;id&quot;));</span>
-<span class="fc" id="L110">                ordine.setSubtotal(rs.getFloat(&quot;subtotal&quot;));</span>
-<span class="fc" id="L111">                ordine.setCustomerEmail(rs.getString(&quot;customer_email&quot;));</span>
-<span class="fc" id="L112">                ordine.setStatus(rs.getString(&quot;status&quot;));</span>
-<span class="fc" id="L113">                ordine.setDataOrdine(rs.getDate(&quot;data_ordine&quot;));</span>
-<span class="fc" id="L114">                ordini.add(ordine);</span>
-<span class="fc" id="L115">            }</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L111">                OrdineBean ordine = new OrdineBean();</span>
+<span class="fc" id="L112">                ordine.setId(rs.getInt(&quot;id&quot;));</span>
+<span class="fc" id="L113">                ordine.setSubtotal(rs.getFloat(&quot;subtotal&quot;));</span>
+<span class="fc" id="L114">                ordine.setCustomerEmail(rs.getString(&quot;customer_email&quot;));</span>
+<span class="fc" id="L115">                ordine.setStatus(rs.getString(&quot;status&quot;));</span>
+<span class="fc" id="L116">                ordine.setDataOrdine(rs.getDate(&quot;data_ordine&quot;));</span>
+<span class="fc" id="L117">                ordini.add(ordine);</span>
+<span class="fc" id="L118">            }</span>
 
-<span class="nc" id="L117">        } catch (SQLException e) {</span>
-<span class="nc" id="L118">            e.printStackTrace();</span>
-<span class="fc" id="L119">        }</span>
+<span class="nc" id="L120">        } catch (SQLException e) {</span>
+<span class="nc" id="L121">            LOGGER.log(Level.SEVERE, &quot;SQL error in getAllOrdini&quot;, e);</span>
+<span class="fc" id="L122">        }</span>
 
-<span class="fc" id="L121">        return ordini;</span>
+<span class="fc" id="L124">        return ordini;</span>
     }
 
     @Override
@@ -131,30 +134,30 @@ public class OrdineDAOImpl implements OrdineDAO {
       @           &amp;&amp; clienteEmail.equals(\result.get(i).getCustomerEmail()));
       @*/
     public List&lt;OrdineBean&gt; getOrdiniByCliente(String clienteEmail) {
-<span class="fc" id="L134">        String query = &quot;SELECT * FROM Ordine WHERE customer_email = ?&quot;;</span>
-<span class="fc" id="L135">        List&lt;OrdineBean&gt; ordini = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L137">        String query = &quot;SELECT * FROM Ordine WHERE customer_email = ?&quot;;</span>
+<span class="fc" id="L138">        List&lt;OrdineBean&gt; ordini = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L137">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L138">             PreparedStatement ps = con.prepareStatement(query)) {</span>
+<span class="fc" id="L140">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L141">             PreparedStatement ps = con.prepareStatement(query)) {</span>
 
-<span class="fc" id="L140">            ps.setString(1, clienteEmail);</span>
-<span class="fc" id="L141">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L143">            ps.setString(1, clienteEmail);</span>
+<span class="fc" id="L144">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="fc bfc" id="L143" title="All 2 branches covered.">            while (rs.next()) {</span>
-<span class="fc" id="L144">                OrdineBean ordine = new OrdineBean();</span>
-<span class="fc" id="L145">                ordine.setId(rs.getInt(&quot;id&quot;));</span>
-<span class="fc" id="L146">                ordine.setSubtotal(rs.getFloat(&quot;subtotal&quot;));</span>
-<span class="fc" id="L147">                ordine.setCustomerEmail(rs.getString(&quot;customer_email&quot;));</span>
-<span class="fc" id="L148">                ordine.setStatus(rs.getString(&quot;status&quot;));</span>
-<span class="fc" id="L149">                ordine.setDataOrdine(rs.getDate(&quot;data_ordine&quot;));</span>
-<span class="fc" id="L150">                ordini.add(ordine);</span>
-<span class="fc" id="L151">            }</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L147">                OrdineBean ordine = new OrdineBean();</span>
+<span class="fc" id="L148">                ordine.setId(rs.getInt(&quot;id&quot;));</span>
+<span class="fc" id="L149">                ordine.setSubtotal(rs.getFloat(&quot;subtotal&quot;));</span>
+<span class="fc" id="L150">                ordine.setCustomerEmail(rs.getString(&quot;customer_email&quot;));</span>
+<span class="fc" id="L151">                ordine.setStatus(rs.getString(&quot;status&quot;));</span>
+<span class="fc" id="L152">                ordine.setDataOrdine(rs.getDate(&quot;data_ordine&quot;));</span>
+<span class="fc" id="L153">                ordini.add(ordine);</span>
+<span class="fc" id="L154">            }</span>
 
-<span class="nc" id="L153">        } catch (SQLException e) {</span>
-<span class="nc" id="L154">            e.printStackTrace();</span>
-<span class="fc" id="L155">        }</span>
+<span class="nc" id="L156">        } catch (SQLException e) {</span>
+<span class="nc" id="L157">            LOGGER.log(Level.SEVERE, &quot;SQL error in getOrdiniByCliente&quot;, e);</span>
+<span class="fc" id="L158">        }</span>
 
-<span class="fc" id="L157">        return ordini;</span>
+<span class="fc" id="L160">        return ordini;</span>
     }
 
     @Override
@@ -164,20 +167,20 @@ public class OrdineDAOImpl implements OrdineDAO {
       @   ensures \result &gt;= 0;
       @*/
     public int countOrdiniByCliente(String email) {
-<span class="nc" id="L167">        int count = 0;</span>
-<span class="nc" id="L168">        try (Connection connection = ds.getConnection()) {</span>
-<span class="nc" id="L169">            String query = &quot;SELECT COUNT(*) FROM Ordine WHERE customer_email = ?&quot;;</span>
-<span class="nc" id="L170">            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {</span>
-<span class="nc" id="L171">                preparedStatement.setString(1, email);</span>
-<span class="nc" id="L172">                ResultSet resultSet = preparedStatement.executeQuery();</span>
-<span class="nc bnc" id="L173" title="All 2 branches missed.">                if (resultSet.next()) {</span>
-<span class="nc" id="L174">                    count = resultSet.getInt(1);</span>
+<span class="nc" id="L170">        int count = 0;</span>
+<span class="nc" id="L171">        try (Connection connection = ds.getConnection()) {</span>
+<span class="nc" id="L172">            String query = &quot;SELECT COUNT(*) FROM Ordine WHERE customer_email = ?&quot;;</span>
+<span class="nc" id="L173">            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {</span>
+<span class="nc" id="L174">                preparedStatement.setString(1, email);</span>
+<span class="nc" id="L175">                ResultSet resultSet = preparedStatement.executeQuery();</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">                if (resultSet.next()) {</span>
+<span class="nc" id="L177">                    count = resultSet.getInt(1);</span>
                 }
             }
-<span class="nc" id="L177">        } catch (SQLException e) {</span>
-<span class="nc" id="L178">            e.printStackTrace();</span>
-<span class="nc" id="L179">        }</span>
-<span class="nc" id="L180">        return count;</span>
+<span class="nc" id="L180">        } catch (SQLException e) {</span>
+<span class="nc" id="L181">            LOGGER.log(Level.SEVERE, &quot;SQL error in countOrdiniByCliente&quot;, e);</span>
+<span class="nc" id="L182">        }</span>
+<span class="nc" id="L183">        return count;</span>
     }
 
     @Override
@@ -189,28 +192,28 @@ public class OrdineDAOImpl implements OrdineDAO {
       @   ensures \result != null &amp;&amp; \result.size() &lt;= itemsPerPage;
       @*/
     public List&lt;OrdineBean&gt; getOrdiniByClientePaginati(String email, int currentPage, int itemsPerPage) {
-<span class="nc" id="L192">        List&lt;OrdineBean&gt; ordini = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L193">        try (Connection connection = ds.getConnection()) {</span>
-<span class="nc" id="L194">            int offset = (currentPage - 1) * itemsPerPage;</span>
-<span class="nc" id="L195">            String query = &quot;SELECT id, subtotal, status, data_ordine FROM Ordine WHERE customer_email = ? ORDER BY data_ordine DESC LIMIT ? OFFSET ?&quot;;</span>
-<span class="nc" id="L196">            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {</span>
-<span class="nc" id="L197">                preparedStatement.setString(1, email);</span>
-<span class="nc" id="L198">                preparedStatement.setInt(2, itemsPerPage);</span>
-<span class="nc" id="L199">                preparedStatement.setInt(3, offset);</span>
-<span class="nc" id="L200">                ResultSet resultSet = preparedStatement.executeQuery();</span>
-<span class="nc bnc" id="L201" title="All 2 branches missed.">                while (resultSet.next()) {</span>
-<span class="nc" id="L202">                    OrdineBean ordine = new OrdineBean();</span>
-<span class="nc" id="L203">                    ordine.setId(resultSet.getInt(&quot;id&quot;));</span>
-<span class="nc" id="L204">                    ordine.setSubtotal(resultSet.getFloat(&quot;subtotal&quot;));</span>
-<span class="nc" id="L205">                    ordine.setStatus(resultSet.getString(&quot;status&quot;));</span>
-<span class="nc" id="L206">                    ordine.setDataOrdine(resultSet.getDate(&quot;data_ordine&quot;));</span>
-<span class="nc" id="L207">                    ordini.add(ordine);</span>
-<span class="nc" id="L208">                }</span>
+<span class="nc" id="L195">        List&lt;OrdineBean&gt; ordini = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L196">        try (Connection connection = ds.getConnection()) {</span>
+<span class="nc" id="L197">            int offset = (currentPage - 1) * itemsPerPage;</span>
+<span class="nc" id="L198">            String query = &quot;SELECT id, subtotal, status, data_ordine FROM Ordine WHERE customer_email = ? ORDER BY data_ordine DESC LIMIT ? OFFSET ?&quot;;</span>
+<span class="nc" id="L199">            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {</span>
+<span class="nc" id="L200">                preparedStatement.setString(1, email);</span>
+<span class="nc" id="L201">                preparedStatement.setInt(2, itemsPerPage);</span>
+<span class="nc" id="L202">                preparedStatement.setInt(3, offset);</span>
+<span class="nc" id="L203">                ResultSet resultSet = preparedStatement.executeQuery();</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">                while (resultSet.next()) {</span>
+<span class="nc" id="L205">                    OrdineBean ordine = new OrdineBean();</span>
+<span class="nc" id="L206">                    ordine.setId(resultSet.getInt(&quot;id&quot;));</span>
+<span class="nc" id="L207">                    ordine.setSubtotal(resultSet.getFloat(&quot;subtotal&quot;));</span>
+<span class="nc" id="L208">                    ordine.setStatus(resultSet.getString(&quot;status&quot;));</span>
+<span class="nc" id="L209">                    ordine.setDataOrdine(resultSet.getDate(&quot;data_ordine&quot;));</span>
+<span class="nc" id="L210">                    ordini.add(ordine);</span>
+<span class="nc" id="L211">                }</span>
             }
-<span class="nc" id="L210">        } catch (SQLException e) {</span>
-<span class="nc" id="L211">            e.printStackTrace();</span>
-<span class="nc" id="L212">        }</span>
-<span class="nc" id="L213">        return ordini;</span>
+<span class="nc" id="L213">        } catch (SQLException e) {</span>
+<span class="nc" id="L214">            LOGGER.log(Level.SEVERE, &quot;SQL error in getOrdiniByClientePaginati&quot;, e);</span>
+<span class="nc" id="L215">        }</span>
+<span class="nc" id="L216">        return ordini;</span>
     }
 
     @Override
@@ -220,31 +223,31 @@ public class OrdineDAOImpl implements OrdineDAO {
       @   ensures \result != null &amp;&amp; \result.size() &lt;= recordsPerPage;
       @*/
     public List&lt;OrdineBean&gt; getOrdiniPaginati(int currentPage, int recordsPerPage) {
-<span class="nc" id="L223">        List&lt;OrdineBean&gt; ordini = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L224">        String query = &quot;SELECT * FROM Ordine LIMIT ? OFFSET ?&quot;;</span>
+<span class="nc" id="L226">        List&lt;OrdineBean&gt; ordini = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L227">        String query = &quot;SELECT * FROM Ordine LIMIT ? OFFSET ?&quot;;</span>
 
-<span class="nc" id="L226">        try (Connection conn = ds.getConnection();</span>
-<span class="nc" id="L227">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
+<span class="nc" id="L229">        try (Connection conn = ds.getConnection();</span>
+<span class="nc" id="L230">             PreparedStatement pstmt = conn.prepareStatement(query)) {</span>
 
-<span class="nc" id="L229">            pstmt.setInt(1, recordsPerPage);</span>
-<span class="nc" id="L230">            pstmt.setInt(2, (currentPage - 1) * recordsPerPage);</span>
+<span class="nc" id="L232">            pstmt.setInt(1, recordsPerPage);</span>
+<span class="nc" id="L233">            pstmt.setInt(2, (currentPage - 1) * recordsPerPage);</span>
 
-<span class="nc" id="L232">            try (ResultSet rs = pstmt.executeQuery()) {</span>
-<span class="nc bnc" id="L233" title="All 2 branches missed.">                while (rs.next()) {</span>
-<span class="nc" id="L234">                    OrdineBean ordine = new OrdineBean();</span>
-<span class="nc" id="L235">                    ordine.setId(rs.getInt(&quot;id&quot;));</span>
-<span class="nc" id="L236">                    ordine.setSubtotal(rs.getFloat(&quot;subtotal&quot;));</span>
-<span class="nc" id="L237">                    ordine.setCustomerEmail(rs.getString(&quot;customer_email&quot;));</span>
-<span class="nc" id="L238">                    ordine.setStatus(rs.getString(&quot;status&quot;));</span>
-<span class="nc" id="L239">                    ordine.setDataOrdine(rs.getDate(&quot;data_ordine&quot;));</span>
-<span class="nc" id="L240">                    ordini.add(ordine);</span>
-<span class="nc" id="L241">                }</span>
+<span class="nc" id="L235">            try (ResultSet rs = pstmt.executeQuery()) {</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">                while (rs.next()) {</span>
+<span class="nc" id="L237">                    OrdineBean ordine = new OrdineBean();</span>
+<span class="nc" id="L238">                    ordine.setId(rs.getInt(&quot;id&quot;));</span>
+<span class="nc" id="L239">                    ordine.setSubtotal(rs.getFloat(&quot;subtotal&quot;));</span>
+<span class="nc" id="L240">                    ordine.setCustomerEmail(rs.getString(&quot;customer_email&quot;));</span>
+<span class="nc" id="L241">                    ordine.setStatus(rs.getString(&quot;status&quot;));</span>
+<span class="nc" id="L242">                    ordine.setDataOrdine(rs.getDate(&quot;data_ordine&quot;));</span>
+<span class="nc" id="L243">                    ordini.add(ordine);</span>
+<span class="nc" id="L244">                }</span>
             }
-<span class="nc" id="L243">        } catch (SQLException e) {</span>
-<span class="nc" id="L244">            e.printStackTrace();</span>
-<span class="nc" id="L245">        }</span>
+<span class="nc" id="L246">        } catch (SQLException e) {</span>
+<span class="nc" id="L247">            LOGGER.log(Level.SEVERE, &quot;SQL error in getOrdiniPaginati&quot;, e);</span>
+<span class="nc" id="L248">        }</span>
 
-<span class="nc" id="L247">        return ordini;</span>
+<span class="nc" id="L250">        return ordini;</span>
     }
 
     @Override
@@ -253,21 +256,21 @@ public class OrdineDAOImpl implements OrdineDAO {
       @   ensures \result &gt;= 0;
       @*/
     public int countTuttiOrdini() {
-<span class="nc" id="L256">        int count = 0;</span>
-<span class="nc" id="L257">        String query = &quot;SELECT COUNT(*) FROM Ordine&quot;;</span>
+<span class="nc" id="L259">        int count = 0;</span>
+<span class="nc" id="L260">        String query = &quot;SELECT COUNT(*) FROM Ordine&quot;;</span>
 
-<span class="nc" id="L259">        try (Connection conn = ds.getConnection();</span>
-<span class="nc" id="L260">             Statement stmt = conn.createStatement();</span>
-<span class="nc" id="L261">             ResultSet rs = stmt.executeQuery(query)) {</span>
+<span class="nc" id="L262">        try (Connection conn = ds.getConnection();</span>
+<span class="nc" id="L263">             Statement stmt = conn.createStatement();</span>
+<span class="nc" id="L264">             ResultSet rs = stmt.executeQuery(query)) {</span>
 
-<span class="nc bnc" id="L263" title="All 2 branches missed.">            if (rs.next()) {</span>
-<span class="nc" id="L264">                count = rs.getInt(1);</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L267">                count = rs.getInt(1);</span>
             }
-<span class="nc" id="L266">        } catch (SQLException e) {</span>
-<span class="nc" id="L267">            e.printStackTrace();</span>
-<span class="nc" id="L268">        }</span>
+<span class="nc" id="L269">        } catch (SQLException e) {</span>
+<span class="nc" id="L270">            LOGGER.log(Level.SEVERE, &quot;SQL error in countTuttiOrdini&quot;, e);</span>
+<span class="nc" id="L271">        }</span>
 
-<span class="nc" id="L270">        return count;</span>
+<span class="nc" id="L273">        return count;</span>
     }
 
     @Override
@@ -279,20 +282,20 @@ public class OrdineDAOImpl implements OrdineDAO {
       @   ensures \result ==&gt; true;
       @*/
     public boolean updateStatus(OrdineBean ordineBean) {
-<span class="fc" id="L282">        String sql = &quot;UPDATE Ordine SET status = ? WHERE id = ?&quot;;</span>
-<span class="fc" id="L283">        try (Connection conn = ds.getConnection();</span>
-<span class="fc" id="L284">             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {</span>
+<span class="fc" id="L285">        String sql = &quot;UPDATE Ordine SET status = ? WHERE id = ?&quot;;</span>
+<span class="fc" id="L286">        try (Connection conn = ds.getConnection();</span>
+<span class="fc" id="L287">             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {</span>
 
             // Impostazione dei parametri della query
-<span class="fc" id="L287">            preparedStatement.setString(1, ordineBean.getStatus());</span>
-<span class="fc" id="L288">            preparedStatement.setInt(2, ordineBean.getId());</span>
+<span class="fc" id="L290">            preparedStatement.setString(1, ordineBean.getStatus());</span>
+<span class="fc" id="L291">            preparedStatement.setInt(2, ordineBean.getId());</span>
 
             // Esecuzione dell'aggiornamento
-<span class="fc" id="L291">            int rowsUpdated = preparedStatement.executeUpdate();</span>
-<span class="pc bpc" id="L292" title="1 of 2 branches missed.">            return rowsUpdated &gt; 0; // Restituisce true se almeno una riga è stata aggiornata</span>
-<span class="nc" id="L293">        } catch (SQLException e) {</span>
-<span class="nc" id="L294">            e.printStackTrace();</span>
-<span class="nc" id="L295">            return false; // Gestisce l'errore restituendo false</span>
+<span class="fc" id="L294">            int rowsUpdated = preparedStatement.executeUpdate();</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">            return rowsUpdated &gt; 0; // Restituisce true se almeno una riga è stata aggiornata</span>
+<span class="nc" id="L296">        } catch (SQLException e) {</span>
+<span class="nc" id="L297">            LOGGER.log(Level.SEVERE, &quot;SQL error in updateStatus&quot;, e);</span>
+<span class="nc" id="L298">            return false; // Gestisce l'errore restituendo false</span>
         }
     }
 

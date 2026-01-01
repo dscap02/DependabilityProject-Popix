@@ -9,19 +9,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RigaOrdineDAOImpl implements RigaOrdineDAO {
 
     private DataSource ds;
+<span class="fc" id="L18">    private static final Logger LOGGER = Logger.getLogger(RigaOrdineDAOImpl.class.getName());</span>
 
     /*@ public model boolean available;
       @ public invariant ds != null &amp;&amp; available;
       @ represents available &lt;- ds != null;
       @*/
 
-<span class="fc" id="L22">    public RigaOrdineDAOImpl() {</span>
-<span class="fc" id="L23">        this.ds = DataSourceSingleton.getInstance();</span>
-<span class="fc" id="L24">    }</span>
+<span class="fc" id="L25">    public RigaOrdineDAOImpl() {</span>
+<span class="fc" id="L26">        this.ds = DataSourceSingleton.getInstance();</span>
+<span class="fc" id="L27">    }</span>
 
     @Override
     /*@ public normal_behavior
@@ -34,22 +37,22 @@ public class RigaOrdineDAOImpl implements RigaOrdineDAO {
       @   ensures available;
       @*/
     public void addRigaOrdine(RigaOrdineBean rigaOrdine) {
-<span class="fc" id="L37">        String query = &quot;INSERT INTO RigaOrdine (ordine_id, prodotto_id, quantity, unitary_cost) VALUES (?, ?, ?, ?)&quot;;</span>
+<span class="fc" id="L40">        String query = &quot;INSERT INTO RigaOrdine (ordine_id, prodotto_id, quantity, unitary_cost) VALUES (?, ?, ?, ?)&quot;;</span>
 
-<span class="fc" id="L39">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L40">             PreparedStatement ps = con.prepareStatement(query)) {</span>
+<span class="fc" id="L42">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L43">             PreparedStatement ps = con.prepareStatement(query)) {</span>
 
-<span class="fc" id="L42">            ps.setInt(1, rigaOrdine.getOrdineId());</span>
-<span class="fc" id="L43">            ps.setString(2, rigaOrdine.getProdottoId());</span>
-<span class="fc" id="L44">            ps.setInt(3, rigaOrdine.getQuantity());</span>
-<span class="fc" id="L45">            ps.setFloat(4, rigaOrdine.getUnitaryCost());</span>
+<span class="fc" id="L45">            ps.setInt(1, rigaOrdine.getOrdineId());</span>
+<span class="fc" id="L46">            ps.setString(2, rigaOrdine.getProdottoId());</span>
+<span class="fc" id="L47">            ps.setInt(3, rigaOrdine.getQuantity());</span>
+<span class="fc" id="L48">            ps.setFloat(4, rigaOrdine.getUnitaryCost());</span>
 
-<span class="fc" id="L47">            ps.executeUpdate();</span>
+<span class="fc" id="L50">            ps.executeUpdate();</span>
 
-<span class="nc" id="L49">        } catch (SQLException e) {</span>
-<span class="nc" id="L50">            e.printStackTrace();</span>
-<span class="fc" id="L51">        }</span>
-<span class="fc" id="L52">    }</span>
+<span class="nc" id="L52">        } catch (SQLException e) {</span>
+<span class="nc" id="L53">            LOGGER.log(Level.SEVERE, &quot;SQL error in addRigaOrdine&quot;, e);</span>
+<span class="fc" id="L54">        }</span>
+<span class="fc" id="L55">    }</span>
 
     @Override
     /*@ public normal_behavior
@@ -65,29 +68,29 @@ public class RigaOrdineDAOImpl implements RigaOrdineDAO {
       @           &amp;&amp; !\result.get(i).getProdottoId().isEmpty());
       @*/
     public List&lt;RigaOrdineBean&gt; getRigheOrdineByOrdineId(int ordineId) {
-<span class="fc" id="L68">        String query = &quot;SELECT * FROM RigaOrdine WHERE ordine_id = ?&quot;;</span>
-<span class="fc" id="L69">        List&lt;RigaOrdineBean&gt; righeOrdine = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L71">        String query = &quot;SELECT * FROM RigaOrdine WHERE ordine_id = ?&quot;;</span>
+<span class="fc" id="L72">        List&lt;RigaOrdineBean&gt; righeOrdine = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L71">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L72">             PreparedStatement ps = con.prepareStatement(query)) {</span>
+<span class="fc" id="L74">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L75">             PreparedStatement ps = con.prepareStatement(query)) {</span>
 
-<span class="fc" id="L74">            ps.setInt(1, ordineId);</span>
-<span class="fc" id="L75">            ResultSet rs = ps.executeQuery();</span>
+<span class="fc" id="L77">            ps.setInt(1, ordineId);</span>
+<span class="fc" id="L78">            ResultSet rs = ps.executeQuery();</span>
 
-<span class="fc bfc" id="L77" title="All 2 branches covered.">            while (rs.next()) {</span>
-<span class="fc" id="L78">                RigaOrdineBean rigaOrdine = new RigaOrdineBean();</span>
-<span class="fc" id="L79">                rigaOrdine.setOrdineId(rs.getInt(&quot;ordine_id&quot;));</span>
-<span class="fc" id="L80">                rigaOrdine.setProdottoId(rs.getString(&quot;prodotto_id&quot;));</span>
-<span class="fc" id="L81">                rigaOrdine.setQuantity(rs.getInt(&quot;quantity&quot;));</span>
-<span class="fc" id="L82">                rigaOrdine.setUnitaryCost(rs.getFloat(&quot;unitary_cost&quot;));</span>
-<span class="fc" id="L83">                righeOrdine.add(rigaOrdine);</span>
-<span class="fc" id="L84">            }</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L81">                RigaOrdineBean rigaOrdine = new RigaOrdineBean();</span>
+<span class="fc" id="L82">                rigaOrdine.setOrdineId(rs.getInt(&quot;ordine_id&quot;));</span>
+<span class="fc" id="L83">                rigaOrdine.setProdottoId(rs.getString(&quot;prodotto_id&quot;));</span>
+<span class="fc" id="L84">                rigaOrdine.setQuantity(rs.getInt(&quot;quantity&quot;));</span>
+<span class="fc" id="L85">                rigaOrdine.setUnitaryCost(rs.getFloat(&quot;unitary_cost&quot;));</span>
+<span class="fc" id="L86">                righeOrdine.add(rigaOrdine);</span>
+<span class="fc" id="L87">            }</span>
 
-<span class="nc" id="L86">        } catch (SQLException e) {</span>
-<span class="nc" id="L87">            e.printStackTrace();</span>
-<span class="fc" id="L88">        }</span>
+<span class="nc" id="L89">        } catch (SQLException e) {</span>
+<span class="nc" id="L90">            LOGGER.log(Level.SEVERE, &quot;SQL error in getRigheOrdineByOrdineId&quot;, e);</span>
+<span class="fc" id="L91">        }</span>
 
-<span class="fc" id="L90">        return righeOrdine;</span>
+<span class="fc" id="L93">        return righeOrdine;</span>
     }
 
     @Override
@@ -101,22 +104,22 @@ public class RigaOrdineDAOImpl implements RigaOrdineDAO {
       @   ensures available;
       @*/
     public void updateRigaOrdine(RigaOrdineBean rigaOrdine) {
-<span class="fc" id="L104">        String query = &quot;UPDATE RigaOrdine SET quantity = ?, unitary_cost = ? WHERE ordine_id = ? AND prodotto_id = ?&quot;;</span>
+<span class="fc" id="L107">        String query = &quot;UPDATE RigaOrdine SET quantity = ?, unitary_cost = ? WHERE ordine_id = ? AND prodotto_id = ?&quot;;</span>
 
-<span class="fc" id="L106">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L107">             PreparedStatement ps = con.prepareStatement(query)) {</span>
+<span class="fc" id="L109">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L110">             PreparedStatement ps = con.prepareStatement(query)) {</span>
 
-<span class="fc" id="L109">            ps.setInt(1, rigaOrdine.getQuantity());</span>
-<span class="fc" id="L110">            ps.setFloat(2, rigaOrdine.getUnitaryCost());</span>
-<span class="fc" id="L111">            ps.setInt(3, rigaOrdine.getOrdineId());</span>
-<span class="fc" id="L112">            ps.setString(4, rigaOrdine.getProdottoId());</span>
+<span class="fc" id="L112">            ps.setInt(1, rigaOrdine.getQuantity());</span>
+<span class="fc" id="L113">            ps.setFloat(2, rigaOrdine.getUnitaryCost());</span>
+<span class="fc" id="L114">            ps.setInt(3, rigaOrdine.getOrdineId());</span>
+<span class="fc" id="L115">            ps.setString(4, rigaOrdine.getProdottoId());</span>
 
-<span class="fc" id="L114">            ps.executeUpdate();</span>
+<span class="fc" id="L117">            ps.executeUpdate();</span>
 
-<span class="nc" id="L116">        } catch (SQLException e) {</span>
-<span class="nc" id="L117">            e.printStackTrace();</span>
-<span class="fc" id="L118">        }</span>
-<span class="fc" id="L119">    }</span>
+<span class="nc" id="L119">        } catch (SQLException e) {</span>
+<span class="nc" id="L120">            LOGGER.log(Level.SEVERE, &quot;SQL error in updateRigaOrdine&quot;, e);</span>
+<span class="fc" id="L121">        }</span>
+<span class="fc" id="L122">    }</span>
 
     @Override
     /*@ public normal_behavior
@@ -126,19 +129,19 @@ public class RigaOrdineDAOImpl implements RigaOrdineDAO {
       @   ensures available;
       @*/
     public void deleteRigaOrdine(int ordineId, String prodottoId) {
-<span class="fc" id="L129">        String query = &quot;DELETE FROM RigaOrdine WHERE ordine_id = ? AND prodotto_id = ?&quot;;</span>
+<span class="fc" id="L132">        String query = &quot;DELETE FROM RigaOrdine WHERE ordine_id = ? AND prodotto_id = ?&quot;;</span>
 
-<span class="fc" id="L131">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L132">             PreparedStatement ps = con.prepareStatement(query)) {</span>
+<span class="fc" id="L134">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L135">             PreparedStatement ps = con.prepareStatement(query)) {</span>
 
-<span class="fc" id="L134">            ps.setInt(1, ordineId);</span>
-<span class="fc" id="L135">            ps.setString(2, prodottoId);</span>
+<span class="fc" id="L137">            ps.setInt(1, ordineId);</span>
+<span class="fc" id="L138">            ps.setString(2, prodottoId);</span>
 
-<span class="fc" id="L137">            ps.executeUpdate();</span>
+<span class="fc" id="L140">            ps.executeUpdate();</span>
 
-<span class="nc" id="L139">        } catch (SQLException e) {</span>
-<span class="nc" id="L140">            e.printStackTrace();</span>
-<span class="fc" id="L141">        }</span>
-<span class="fc" id="L142">    }</span>
+<span class="nc" id="L142">        } catch (SQLException e) {</span>
+<span class="nc" id="L143">            LOGGER.log(Level.SEVERE, &quot;SQL error in deleteRigaOrdine&quot;, e);</span>
+<span class="fc" id="L144">        }</span>
+<span class="fc" id="L145">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

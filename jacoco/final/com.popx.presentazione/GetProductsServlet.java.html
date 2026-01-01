@@ -8,80 +8,79 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = &quot;GetProductsServlet&quot;, urlPatterns = {&quot;/getProductsServlet&quot;})
 public class GetProductsServlet extends HttpServlet {
 
     private static final int PRODUCTS_PER_PAGE = 6;
-    private ProdottoDAO prodottoDAO;
+    private final ProdottoDAO prodottoDAO;
 
     // 🔹 costruttore production
-<span class="nc" id="L21">    public GetProductsServlet() {</span>
-<span class="nc" id="L22">        this.prodottoDAO = new ProdottoDAOImpl();</span>
-<span class="nc" id="L23">    }</span>
+<span class="nc" id="L20">    public GetProductsServlet() {</span>
+<span class="nc" id="L21">        this.prodottoDAO = new ProdottoDAOImpl();</span>
+<span class="nc" id="L22">    }</span>
 
     // 🔹 costruttore test
-<span class="fc" id="L26">    public GetProductsServlet(ProdottoDAO prodottoDAO) {</span>
-<span class="fc" id="L27">        this.prodottoDAO = prodottoDAO;</span>
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L25">    public GetProductsServlet(ProdottoDAO prodottoDAO) {</span>
+<span class="fc" id="L26">        this.prodottoDAO = prodottoDAO;</span>
+<span class="fc" id="L27">    }</span>
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-<span class="fc" id="L34">        String category = request.getParameter(&quot;category&quot;);</span>
-<span class="fc" id="L35">        String price = request.getParameter(&quot;price&quot;);</span>
-<span class="fc" id="L36">        String pageParam = request.getParameter(&quot;page&quot;);</span>
+<span class="fc" id="L33">        String category = request.getParameter(&quot;category&quot;);</span>
+<span class="fc" id="L34">        String price = request.getParameter(&quot;price&quot;);</span>
+<span class="fc" id="L35">        String pageParam = request.getParameter(&quot;page&quot;);</span>
 
-<span class="fc" id="L38">        int currentPage = 1;</span>
+<span class="fc" id="L37">        int currentPage = 1;</span>
         try {
-<span class="fc bfc" id="L40" title="All 2 branches covered.">            if (pageParam != null) {</span>
-<span class="fc" id="L41">                currentPage = Math.max(1, Integer.parseInt(pageParam));</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            if (pageParam != null) {</span>
+<span class="fc" id="L40">                currentPage = Math.max(1, Integer.parseInt(pageParam));</span>
             }
-<span class="fc" id="L43">        } catch (NumberFormatException ignored) {</span>
-<span class="fc" id="L44">            currentPage = 1;</span>
-<span class="fc" id="L45">        }</span>
+<span class="fc" id="L42">        } catch (NumberFormatException ignored) {</span>
+<span class="fc" id="L43">            currentPage = 1;</span>
+<span class="fc" id="L44">        }</span>
 
         try {
             List&lt;ProdottoBean&gt; prodotti;
 
-<span class="pc bpc" id="L50" title="1 of 4 branches missed.">            if (category != null &amp;&amp; !category.isEmpty()) {</span>
-<span class="pc bpc" id="L51" title="1 of 4 branches missed.">                if (price != null &amp;&amp; !price.isEmpty()) {</span>
-<span class="fc" id="L52">                    boolean ascending = &quot;low&quot;.equalsIgnoreCase(price);</span>
-<span class="fc" id="L53">                    prodotti = prodottoDAO.getProdottiByBrandAndPrice(category, ascending);</span>
-<span class="fc" id="L54">                } else {</span>
-<span class="fc" id="L55">                    prodotti = prodottoDAO.getProdottiByBrand(category);</span>
+<span class="pc bpc" id="L49" title="1 of 4 branches missed.">            if (category != null &amp;&amp; !category.isEmpty()) {</span>
+<span class="pc bpc" id="L50" title="1 of 4 branches missed.">                if (price != null &amp;&amp; !price.isEmpty()) {</span>
+<span class="fc" id="L51">                    boolean ascending = &quot;low&quot;.equalsIgnoreCase(price);</span>
+<span class="fc" id="L52">                    prodotti = prodottoDAO.getProdottiByBrandAndPrice(category, ascending);</span>
+<span class="fc" id="L53">                } else {</span>
+<span class="fc" id="L54">                    prodotti = prodottoDAO.getProdottiByBrand(category);</span>
                 }
-<span class="pc bpc" id="L57" title="3 of 4 branches missed.">            } else if (price != null &amp;&amp; !price.isEmpty()) {</span>
-<span class="nc" id="L58">                boolean ascending = &quot;low&quot;.equalsIgnoreCase(price);</span>
-<span class="nc" id="L59">                prodotti = prodottoDAO.getProdottiSortedByPrice(ascending);</span>
-<span class="nc" id="L60">            } else {</span>
-<span class="fc" id="L61">                prodotti = prodottoDAO.getAllProducts();</span>
+<span class="pc bpc" id="L56" title="3 of 4 branches missed.">            } else if (price != null &amp;&amp; !price.isEmpty()) {</span>
+<span class="nc" id="L57">                boolean ascending = &quot;low&quot;.equalsIgnoreCase(price);</span>
+<span class="nc" id="L58">                prodotti = prodottoDAO.getProdottiSortedByPrice(ascending);</span>
+<span class="nc" id="L59">            } else {</span>
+<span class="fc" id="L60">                prodotti = prodottoDAO.getAllProducts();</span>
             }
 
-<span class="fc" id="L64">            int totalProducts = prodotti.size();</span>
-<span class="fc" id="L65">            int totalPages = (int) Math.ceil((double) totalProducts / PRODUCTS_PER_PAGE);</span>
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">            if (totalPages == 0) totalPages = 1;</span>
+<span class="fc" id="L63">            int totalProducts = prodotti.size();</span>
+<span class="fc" id="L64">            int totalPages = (int) Math.ceil((double) totalProducts / PRODUCTS_PER_PAGE);</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">            if (totalPages == 0) totalPages = 1;</span>
 
-<span class="fc" id="L68">            currentPage = Math.min(currentPage, totalPages);</span>
+<span class="fc" id="L67">            currentPage = Math.min(currentPage, totalPages);</span>
 
-<span class="fc" id="L70">            int start = (currentPage - 1) * PRODUCTS_PER_PAGE;</span>
-<span class="fc" id="L71">            int end = Math.min(start + PRODUCTS_PER_PAGE, totalProducts);</span>
+<span class="fc" id="L69">            int start = (currentPage - 1) * PRODUCTS_PER_PAGE;</span>
+<span class="fc" id="L70">            int end = Math.min(start + PRODUCTS_PER_PAGE, totalProducts);</span>
 
-<span class="fc" id="L73">            List&lt;ProdottoBean&gt; productsForPage = prodotti.subList(start, end);</span>
+<span class="fc" id="L72">            List&lt;ProdottoBean&gt; productsForPage = prodotti.subList(start, end);</span>
 
-<span class="fc" id="L75">            request.setAttribute(&quot;products&quot;, productsForPage);</span>
-<span class="fc" id="L76">            request.setAttribute(&quot;currentPage&quot;, currentPage);</span>
-<span class="fc" id="L77">            request.setAttribute(&quot;totalPages&quot;, totalPages);</span>
+<span class="fc" id="L74">            request.setAttribute(&quot;products&quot;, productsForPage);</span>
+<span class="fc" id="L75">            request.setAttribute(&quot;currentPage&quot;, currentPage);</span>
+<span class="fc" id="L76">            request.setAttribute(&quot;totalPages&quot;, totalPages);</span>
 
-<span class="fc" id="L79">            request.getRequestDispatcher(&quot;/jsp/Catalog.jsp&quot;).forward(request, response);</span>
+<span class="fc" id="L78">            request.getRequestDispatcher(&quot;/jsp/Catalog.jsp&quot;).forward(request, response);</span>
 
-<span class="fc" id="L81">        } catch (Exception e) {</span>
-<span class="fc" id="L82">            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,</span>
+<span class="fc" id="L80">        } catch (Exception e) {</span>
+<span class="fc" id="L81">            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,</span>
                     &quot;Errore durante il recupero dei prodotti.&quot;);
-<span class="fc" id="L84">        }</span>
-<span class="fc" id="L85">    }</span>
+<span class="fc" id="L83">        }</span>
+<span class="fc" id="L84">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -7,23 +7,26 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProdottoDAOImpl implements ProdottoDAO {
 
     private final DataSource ds;
+<span class="fc" id="L16">    private static final Logger LOGGER = Logger.getLogger(ProdottoDAOImpl.class.getName());</span>
 
     /*@ public model boolean available;
       @ public invariant ds != null &amp;&amp; available;
       @ represents available &lt;- ds != null;
       @*/
 
-<span class="fc" id="L20">    public ProdottoDAOImpl(DataSource ds) {</span>
-<span class="fc" id="L21">        this.ds = ds;</span>
-<span class="fc" id="L22">    }</span>
+<span class="fc" id="L23">    public ProdottoDAOImpl(DataSource ds) {</span>
+<span class="fc" id="L24">        this.ds = ds;</span>
+<span class="fc" id="L25">    }</span>
 
     public ProdottoDAOImpl() {
-<span class="fc" id="L25">        this(DataSourceSingleton.getInstance());</span>
-<span class="fc" id="L26">    }</span>
+<span class="fc" id="L28">        this(DataSourceSingleton.getInstance());</span>
+<span class="fc" id="L29">    }</span>
 
     @Override
     /*@ public normal_behavior
@@ -37,22 +40,22 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result ==&gt; true;
       @*/
     public boolean saveProdotto(ProdottoBean prodotto) {
-<span class="fc" id="L40">        String query = &quot;INSERT INTO Prodotto (id, name, description, cost, pieces_in_stock, brand, img, figure) VALUES (?, ?, ?, ?, ?, ?, ?, ?)&quot;;</span>
-<span class="fc" id="L41">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L42">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
-<span class="fc" id="L43">            statement.setString(1, prodotto.getId());</span>
-<span class="fc" id="L44">            statement.setString(2, prodotto.getName());</span>
-<span class="fc" id="L45">            statement.setString(3, prodotto.getDescription());</span>
-<span class="fc" id="L46">            statement.setDouble(4, prodotto.getCost());</span>
-<span class="fc" id="L47">            statement.setInt(5, prodotto.getPiecesInStock());</span>
-<span class="fc" id="L48">            statement.setString(6, prodotto.getBrand());</span>
-<span class="fc" id="L49">            statement.setBytes(7, prodotto.getImg());</span>
-<span class="fc" id="L50">            statement.setString(8, prodotto.getFigure());  // Set the figure field</span>
-<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            return statement.executeUpdate() &gt; 0;</span>
-<span class="nc" id="L52">        } catch (SQLException e) {</span>
-<span class="nc" id="L53">            e.printStackTrace();</span>
+<span class="fc" id="L43">        String query = &quot;INSERT INTO Prodotto (id, name, description, cost, pieces_in_stock, brand, img, figure) VALUES (?, ?, ?, ?, ?, ?, ?, ?)&quot;;</span>
+<span class="fc" id="L44">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L45">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L46">            statement.setString(1, prodotto.getId());</span>
+<span class="fc" id="L47">            statement.setString(2, prodotto.getName());</span>
+<span class="fc" id="L48">            statement.setString(3, prodotto.getDescription());</span>
+<span class="fc" id="L49">            statement.setDouble(4, prodotto.getCost());</span>
+<span class="fc" id="L50">            statement.setInt(5, prodotto.getPiecesInStock());</span>
+<span class="fc" id="L51">            statement.setString(6, prodotto.getBrand());</span>
+<span class="fc" id="L52">            statement.setBytes(7, prodotto.getImg());</span>
+<span class="fc" id="L53">            statement.setString(8, prodotto.getFigure());  // Set the figure field</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">            return statement.executeUpdate() &gt; 0;</span>
+<span class="nc" id="L55">        } catch (SQLException e) {</span>
+<span class="nc" id="L56">            LOGGER.log(Level.SEVERE, &quot;SQL error in saveProdotto&quot;, e);</span>
         }
-<span class="nc" id="L55">        return false;</span>
+<span class="nc" id="L58">        return false;</span>
     }
 
     @Override
@@ -62,27 +65,27 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result == null || \result.getId().equals(id);
       @*/
     public ProdottoBean getProdottoById(String id) {
-<span class="fc" id="L65">        String query = &quot;SELECT * FROM Prodotto WHERE id = ?&quot;;</span>
-<span class="fc" id="L66">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L67">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
-<span class="fc" id="L68">            statement.setString(1, id);</span>
-<span class="fc" id="L69">            ResultSet resultSet = statement.executeQuery();</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (resultSet.next()) {</span>
-<span class="fc" id="L71">                return new ProdottoBean(</span>
-<span class="fc" id="L72">                        resultSet.getString(&quot;id&quot;),</span>
-<span class="fc" id="L73">                        resultSet.getString(&quot;name&quot;),</span>
-<span class="fc" id="L74">                        resultSet.getString(&quot;description&quot;),</span>
-<span class="fc" id="L75">                        resultSet.getDouble(&quot;cost&quot;),</span>
-<span class="fc" id="L76">                        resultSet.getInt(&quot;pieces_in_stock&quot;),</span>
-<span class="fc" id="L77">                        resultSet.getString(&quot;brand&quot;),</span>
-<span class="fc" id="L78">                        resultSet.getBytes(&quot;img&quot;),</span>
-<span class="fc" id="L79">                        resultSet.getString(&quot;figure&quot;)  // Retrieve the figure field</span>
+<span class="fc" id="L68">        String query = &quot;SELECT * FROM Prodotto WHERE id = ?&quot;;</span>
+<span class="fc" id="L69">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L70">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L71">            statement.setString(1, id);</span>
+<span class="fc" id="L72">            ResultSet resultSet = statement.executeQuery();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (resultSet.next()) {</span>
+<span class="fc" id="L74">                return new ProdottoBean(</span>
+<span class="fc" id="L75">                        resultSet.getString(&quot;id&quot;),</span>
+<span class="fc" id="L76">                        resultSet.getString(&quot;name&quot;),</span>
+<span class="fc" id="L77">                        resultSet.getString(&quot;description&quot;),</span>
+<span class="fc" id="L78">                        resultSet.getDouble(&quot;cost&quot;),</span>
+<span class="fc" id="L79">                        resultSet.getInt(&quot;pieces_in_stock&quot;),</span>
+<span class="fc" id="L80">                        resultSet.getString(&quot;brand&quot;),</span>
+<span class="fc" id="L81">                        resultSet.getBytes(&quot;img&quot;),</span>
+<span class="fc" id="L82">                        resultSet.getString(&quot;figure&quot;)  // Retrieve the figure field</span>
                 );
             }
-<span class="pc bpc" id="L82" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
-<span class="nc" id="L83">            e.printStackTrace();</span>
-<span class="fc" id="L84">        }</span>
-<span class="fc" id="L85">        return null;</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
+<span class="nc" id="L86">            LOGGER.log(Level.SEVERE, &quot;SQL error in getProdottoById&quot;, e);</span>
+<span class="fc" id="L87">        }</span>
+<span class="fc" id="L88">        return null;</span>
     }
 
     @Override
@@ -95,28 +98,28 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @           &amp;&amp; brand.equals(\result.get(i).getBrand()));
       @*/
     public List&lt;ProdottoBean&gt; getProdottiByBrand(String brand) {
-<span class="fc" id="L98">        List&lt;ProdottoBean&gt; prodotti = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L99">        String query = &quot;SELECT * FROM Prodotto WHERE brand = ?&quot;;</span>
-<span class="fc" id="L100">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L101">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
-<span class="fc" id="L102">            statement.setString(1, brand);</span>
-<span class="fc" id="L103">            ResultSet resultSet = statement.executeQuery();</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">            while (resultSet.next()) {</span>
-<span class="fc" id="L105">                prodotti.add(new ProdottoBean(</span>
-<span class="fc" id="L106">                        resultSet.getString(&quot;id&quot;),</span>
-<span class="fc" id="L107">                        resultSet.getString(&quot;name&quot;),</span>
-<span class="fc" id="L108">                        resultSet.getString(&quot;description&quot;),</span>
-<span class="fc" id="L109">                        resultSet.getDouble(&quot;cost&quot;),</span>
-<span class="fc" id="L110">                        resultSet.getInt(&quot;pieces_in_stock&quot;),</span>
-<span class="fc" id="L111">                        resultSet.getString(&quot;brand&quot;),</span>
-<span class="fc" id="L112">                        resultSet.getBytes(&quot;img&quot;),</span>
-<span class="fc" id="L113">                        resultSet.getString(&quot;figure&quot;)  // Retrieve the figure field</span>
+<span class="fc" id="L101">        List&lt;ProdottoBean&gt; prodotti = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L102">        String query = &quot;SELECT * FROM Prodotto WHERE brand = ?&quot;;</span>
+<span class="fc" id="L103">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L104">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L105">            statement.setString(1, brand);</span>
+<span class="fc" id="L106">            ResultSet resultSet = statement.executeQuery();</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            while (resultSet.next()) {</span>
+<span class="fc" id="L108">                prodotti.add(new ProdottoBean(</span>
+<span class="fc" id="L109">                        resultSet.getString(&quot;id&quot;),</span>
+<span class="fc" id="L110">                        resultSet.getString(&quot;name&quot;),</span>
+<span class="fc" id="L111">                        resultSet.getString(&quot;description&quot;),</span>
+<span class="fc" id="L112">                        resultSet.getDouble(&quot;cost&quot;),</span>
+<span class="fc" id="L113">                        resultSet.getInt(&quot;pieces_in_stock&quot;),</span>
+<span class="fc" id="L114">                        resultSet.getString(&quot;brand&quot;),</span>
+<span class="fc" id="L115">                        resultSet.getBytes(&quot;img&quot;),</span>
+<span class="fc" id="L116">                        resultSet.getString(&quot;figure&quot;)  // Retrieve the figure field</span>
                 ));
             }
-<span class="nc" id="L116">        } catch (SQLException e) {</span>
-<span class="nc" id="L117">            e.printStackTrace();</span>
-<span class="fc" id="L118">        }</span>
-<span class="fc" id="L119">        return prodotti;</span>
+<span class="nc" id="L119">        } catch (SQLException e) {</span>
+<span class="nc" id="L120">            LOGGER.log(Level.SEVERE, &quot;SQL error in getProdottiByBrand&quot;, e);</span>
+<span class="fc" id="L121">        }</span>
+<span class="fc" id="L122">        return prodotti;</span>
     }
 
     @Override
@@ -129,28 +132,28 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @           &amp;&amp; brand.equals(\result.get(i).getBrand()));
       @*/
     public List&lt;ProdottoBean&gt; getProdottiByBrandAndPrice(String brand, boolean ascending) {
-<span class="fc" id="L132">        List&lt;ProdottoBean&gt; prodotti = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        String query = &quot;SELECT * FROM Prodotto WHERE brand = ? ORDER BY cost &quot; + (ascending ? &quot;ASC&quot; : &quot;DESC&quot;);</span>
-<span class="fc" id="L134">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L135">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
-<span class="fc" id="L136">            statement.setString(1, brand);</span>
-<span class="fc" id="L137">            ResultSet resultSet = statement.executeQuery();</span>
-<span class="fc bfc" id="L138" title="All 2 branches covered.">            while (resultSet.next()) {</span>
-<span class="fc" id="L139">                prodotti.add(new ProdottoBean(</span>
-<span class="fc" id="L140">                        resultSet.getString(&quot;id&quot;),</span>
-<span class="fc" id="L141">                        resultSet.getString(&quot;name&quot;),</span>
-<span class="fc" id="L142">                        resultSet.getString(&quot;description&quot;),</span>
-<span class="fc" id="L143">                        resultSet.getDouble(&quot;cost&quot;),</span>
-<span class="fc" id="L144">                        resultSet.getInt(&quot;pieces_in_stock&quot;),</span>
-<span class="fc" id="L145">                        resultSet.getString(&quot;brand&quot;),</span>
-<span class="fc" id="L146">                        resultSet.getBytes(&quot;img&quot;),</span>
-<span class="fc" id="L147">                        resultSet.getString(&quot;figure&quot;)  // Retrieve the figure field</span>
+<span class="fc" id="L135">        List&lt;ProdottoBean&gt; prodotti = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        String query = &quot;SELECT * FROM Prodotto WHERE brand = ? ORDER BY cost &quot; + (ascending ? &quot;ASC&quot; : &quot;DESC&quot;);</span>
+<span class="fc" id="L137">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L138">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L139">            statement.setString(1, brand);</span>
+<span class="fc" id="L140">            ResultSet resultSet = statement.executeQuery();</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            while (resultSet.next()) {</span>
+<span class="fc" id="L142">                prodotti.add(new ProdottoBean(</span>
+<span class="fc" id="L143">                        resultSet.getString(&quot;id&quot;),</span>
+<span class="fc" id="L144">                        resultSet.getString(&quot;name&quot;),</span>
+<span class="fc" id="L145">                        resultSet.getString(&quot;description&quot;),</span>
+<span class="fc" id="L146">                        resultSet.getDouble(&quot;cost&quot;),</span>
+<span class="fc" id="L147">                        resultSet.getInt(&quot;pieces_in_stock&quot;),</span>
+<span class="fc" id="L148">                        resultSet.getString(&quot;brand&quot;),</span>
+<span class="fc" id="L149">                        resultSet.getBytes(&quot;img&quot;),</span>
+<span class="fc" id="L150">                        resultSet.getString(&quot;figure&quot;)  // Retrieve the figure field</span>
                 ));
             }
-<span class="nc" id="L150">        } catch (SQLException e) {</span>
-<span class="nc" id="L151">            e.printStackTrace();</span>
-<span class="fc" id="L152">        }</span>
-<span class="fc" id="L153">        return prodotti;</span>
+<span class="nc" id="L153">        } catch (SQLException e) {</span>
+<span class="nc" id="L154">            LOGGER.log(Level.SEVERE, &quot;SQL error in getProdottiByBrandAndPrice&quot;, e);</span>
+<span class="fc" id="L155">        }</span>
+<span class="fc" id="L156">        return prodotti;</span>
     }
 
     @Override
@@ -159,27 +162,27 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result != null;
       @*/
     public List&lt;ProdottoBean&gt; getProdottiSortedByPrice(boolean ascending) {
-<span class="fc" id="L162">        List&lt;ProdottoBean&gt; prodotti = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        String query = &quot;SELECT * FROM Prodotto ORDER BY cost &quot; + (ascending ? &quot;ASC&quot; : &quot;DESC&quot;);</span>
-<span class="fc" id="L164">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L165">             PreparedStatement statement = connection.prepareStatement(query);</span>
-<span class="fc" id="L166">             ResultSet resultSet = statement.executeQuery()) {</span>
-<span class="fc bfc" id="L167" title="All 2 branches covered.">            while (resultSet.next()) {</span>
-<span class="fc" id="L168">                prodotti.add(new ProdottoBean(</span>
-<span class="fc" id="L169">                        resultSet.getString(&quot;id&quot;),</span>
-<span class="fc" id="L170">                        resultSet.getString(&quot;name&quot;),</span>
-<span class="fc" id="L171">                        resultSet.getString(&quot;description&quot;),</span>
-<span class="fc" id="L172">                        resultSet.getDouble(&quot;cost&quot;),</span>
-<span class="fc" id="L173">                        resultSet.getInt(&quot;pieces_in_stock&quot;),</span>
-<span class="fc" id="L174">                        resultSet.getString(&quot;brand&quot;),</span>
-<span class="fc" id="L175">                        resultSet.getBytes(&quot;img&quot;),</span>
-<span class="fc" id="L176">                        resultSet.getString(&quot;figure&quot;)  // Retrieve the figure field</span>
+<span class="fc" id="L165">        List&lt;ProdottoBean&gt; prodotti = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        String query = &quot;SELECT * FROM Prodotto ORDER BY cost &quot; + (ascending ? &quot;ASC&quot; : &quot;DESC&quot;);</span>
+<span class="fc" id="L167">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L168">             PreparedStatement statement = connection.prepareStatement(query);</span>
+<span class="fc" id="L169">             ResultSet resultSet = statement.executeQuery()) {</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">            while (resultSet.next()) {</span>
+<span class="fc" id="L171">                prodotti.add(new ProdottoBean(</span>
+<span class="fc" id="L172">                        resultSet.getString(&quot;id&quot;),</span>
+<span class="fc" id="L173">                        resultSet.getString(&quot;name&quot;),</span>
+<span class="fc" id="L174">                        resultSet.getString(&quot;description&quot;),</span>
+<span class="fc" id="L175">                        resultSet.getDouble(&quot;cost&quot;),</span>
+<span class="fc" id="L176">                        resultSet.getInt(&quot;pieces_in_stock&quot;),</span>
+<span class="fc" id="L177">                        resultSet.getString(&quot;brand&quot;),</span>
+<span class="fc" id="L178">                        resultSet.getBytes(&quot;img&quot;),</span>
+<span class="fc" id="L179">                        resultSet.getString(&quot;figure&quot;)  // Retrieve the figure field</span>
                 ));
             }
-<span class="nc" id="L179">        } catch (SQLException e) {</span>
-<span class="nc" id="L180">            e.printStackTrace();</span>
-<span class="fc" id="L181">        }</span>
-<span class="fc" id="L182">        return prodotti;</span>
+<span class="nc" id="L182">        } catch (SQLException e) {</span>
+<span class="nc" id="L183">            LOGGER.log(Level.SEVERE, &quot;SQL error in getProdottiSortedByPrice&quot;, e);</span>
+<span class="fc" id="L184">        }</span>
+<span class="fc" id="L185">        return prodotti;</span>
     }
 
     @Override
@@ -189,18 +192,18 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result == null || \result.length &gt;= 0;
       @*/
     public byte[] getProductImageById(String id) {
-<span class="fc" id="L192">        String query = &quot;SELECT img FROM Prodotto WHERE id = ?&quot;;</span>
-<span class="fc" id="L193">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L194">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
-<span class="fc" id="L195">            statement.setString(1, id);</span>
-<span class="fc" id="L196">            ResultSet resultSet = statement.executeQuery();</span>
-<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            if (resultSet.next()) {</span>
-<span class="fc" id="L198">                return resultSet.getBytes(&quot;img&quot;);</span>
+<span class="fc" id="L195">        String query = &quot;SELECT img FROM Prodotto WHERE id = ?&quot;;</span>
+<span class="fc" id="L196">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L197">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L198">            statement.setString(1, id);</span>
+<span class="fc" id="L199">            ResultSet resultSet = statement.executeQuery();</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">            if (resultSet.next()) {</span>
+<span class="fc" id="L201">                return resultSet.getBytes(&quot;img&quot;);</span>
             }
-<span class="pc bpc" id="L200" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
-<span class="nc" id="L201">            e.printStackTrace();</span>
-<span class="nc" id="L202">        }</span>
-<span class="nc" id="L203">        return null;</span>
+<span class="pc bpc" id="L203" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
+<span class="nc" id="L204">            LOGGER.log(Level.SEVERE, &quot;SQL error in getProductImageById&quot;, e);</span>
+<span class="nc" id="L205">        }</span>
+<span class="nc" id="L206">        return null;</span>
     }
 
     @Override
@@ -209,28 +212,28 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result != null;
       @*/
     public List&lt;ProdottoBean&gt; getAllProducts() {
-<span class="fc" id="L212">        List&lt;ProdottoBean&gt; products = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L213">        String query = &quot;SELECT * FROM Prodotto ORDER BY id&quot;;</span>
-<span class="fc" id="L214">        try (Connection con = ds.getConnection();</span>
-<span class="fc" id="L215">             PreparedStatement ps = con.prepareStatement(query);</span>
-<span class="fc" id="L216">             ResultSet rs = ps.executeQuery()) {</span>
+<span class="fc" id="L215">        List&lt;ProdottoBean&gt; products = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L216">        String query = &quot;SELECT * FROM Prodotto ORDER BY id&quot;;</span>
+<span class="fc" id="L217">        try (Connection con = ds.getConnection();</span>
+<span class="fc" id="L218">             PreparedStatement ps = con.prepareStatement(query);</span>
+<span class="fc" id="L219">             ResultSet rs = ps.executeQuery()) {</span>
 
-<span class="fc bfc" id="L218" title="All 2 branches covered.">            while (rs.next()) {</span>
-<span class="fc" id="L219">                ProdottoBean prodotto = new ProdottoBean();</span>
-<span class="fc" id="L220">                prodotto.setId(rs.getString(&quot;id&quot;));</span>
-<span class="fc" id="L221">                prodotto.setName(rs.getString(&quot;name&quot;));</span>
-<span class="fc" id="L222">                prodotto.setDescription(rs.getString(&quot;description&quot;));</span>
-<span class="fc" id="L223">                prodotto.setCost(rs.getDouble(&quot;cost&quot;));</span>
-<span class="fc" id="L224">                prodotto.setPiecesInStock(rs.getInt(&quot;pieces_in_stock&quot;)); // Recupero del valore</span>
-<span class="fc" id="L225">                prodotto.setBrand(rs.getString(&quot;brand&quot;));</span>
-<span class="fc" id="L226">                prodotto.setImg(rs.getBytes(&quot;img&quot;));</span>
-<span class="fc" id="L227">                prodotto.setFigure(rs.getString(&quot;figure&quot;));</span>
-<span class="fc" id="L228">                products.add(prodotto);</span>
-<span class="fc" id="L229">            }</span>
-<span class="nc" id="L230">        } catch (SQLException e) {</span>
-<span class="nc" id="L231">            e.printStackTrace();</span>
-<span class="fc" id="L232">        }</span>
-<span class="fc" id="L233">        return products;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L222">                ProdottoBean prodotto = new ProdottoBean();</span>
+<span class="fc" id="L223">                prodotto.setId(rs.getString(&quot;id&quot;));</span>
+<span class="fc" id="L224">                prodotto.setName(rs.getString(&quot;name&quot;));</span>
+<span class="fc" id="L225">                prodotto.setDescription(rs.getString(&quot;description&quot;));</span>
+<span class="fc" id="L226">                prodotto.setCost(rs.getDouble(&quot;cost&quot;));</span>
+<span class="fc" id="L227">                prodotto.setPiecesInStock(rs.getInt(&quot;pieces_in_stock&quot;)); // Recupero del valore</span>
+<span class="fc" id="L228">                prodotto.setBrand(rs.getString(&quot;brand&quot;));</span>
+<span class="fc" id="L229">                prodotto.setImg(rs.getBytes(&quot;img&quot;));</span>
+<span class="fc" id="L230">                prodotto.setFigure(rs.getString(&quot;figure&quot;));</span>
+<span class="fc" id="L231">                products.add(prodotto);</span>
+<span class="fc" id="L232">            }</span>
+<span class="nc" id="L233">        } catch (SQLException e) {</span>
+<span class="nc" id="L234">            LOGGER.log(Level.SEVERE, &quot;SQL error in getAllProducts&quot;, e);</span>
+<span class="fc" id="L235">        }</span>
+<span class="fc" id="L236">        return products;</span>
     }
 
 
@@ -241,29 +244,29 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result != null &amp;&amp; \result.size() &lt;= limit;
       @*/
     public List&lt;ProdottoBean&gt; getRandomProducts(int limit) throws SQLException {
-<span class="fc" id="L244">        List&lt;ProdottoBean&gt; products = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L245">        String query = &quot;SELECT * FROM Prodotto ORDER BY RAND() LIMIT ?&quot;;  // Usato ORDER BY RAND() per ottenere risultati casuali</span>
+<span class="fc" id="L247">        List&lt;ProdottoBean&gt; products = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L248">        String query = &quot;SELECT * FROM Prodotto ORDER BY RAND() LIMIT ?&quot;;  // Usato ORDER BY RAND() per ottenere risultati casuali</span>
 
-<span class="fc" id="L247">        try (Connection con = ds.getConnection(); // Assicurati che ds sia un DataSource valido</span>
-<span class="fc" id="L248">             PreparedStatement ps = con.prepareStatement(query)) {</span>
+<span class="fc" id="L250">        try (Connection con = ds.getConnection(); // Assicurati che ds sia un DataSource valido</span>
+<span class="fc" id="L251">             PreparedStatement ps = con.prepareStatement(query)) {</span>
 
-<span class="fc" id="L250">            ps.setInt(1, limit);  // Imposta il parametro limit dinamicamente</span>
+<span class="fc" id="L253">            ps.setInt(1, limit);  // Imposta il parametro limit dinamicamente</span>
 
-<span class="fc" id="L252">            try (ResultSet rs = ps.executeQuery()) {</span>
-<span class="fc bfc" id="L253" title="All 2 branches covered.">                while (rs.next()) {</span>
-<span class="fc" id="L254">                    ProdottoBean product = new ProdottoBean();</span>
-<span class="fc" id="L255">                    product.setId(rs.getString(&quot;id&quot;));  // Verifica che 'id' sia di tipo String, altrimenti cambia a Integer</span>
-<span class="fc" id="L256">                    product.setName(rs.getString(&quot;name&quot;));</span>
-<span class="fc" id="L257">                    product.setBrand(rs.getString(&quot;brand&quot;));</span>
-<span class="fc" id="L258">                    product.setCost(rs.getDouble(&quot;cost&quot;));</span>
-<span class="fc" id="L259">                    product.setImg(rs.getBytes(&quot;img&quot;));</span>
-<span class="fc" id="L260">                    product.setDescription(rs.getString(&quot;description&quot;));</span>
-<span class="fc" id="L261">                    product.setFigure(rs.getString(&quot;figure&quot;));  // Set the figure field</span>
-<span class="fc" id="L262">                    products.add(product);</span>
-<span class="fc" id="L263">                }</span>
+<span class="fc" id="L255">            try (ResultSet rs = ps.executeQuery()) {</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">                while (rs.next()) {</span>
+<span class="fc" id="L257">                    ProdottoBean product = new ProdottoBean();</span>
+<span class="fc" id="L258">                    product.setId(rs.getString(&quot;id&quot;));  // Verifica che 'id' sia di tipo String, altrimenti cambia a Integer</span>
+<span class="fc" id="L259">                    product.setName(rs.getString(&quot;name&quot;));</span>
+<span class="fc" id="L260">                    product.setBrand(rs.getString(&quot;brand&quot;));</span>
+<span class="fc" id="L261">                    product.setCost(rs.getDouble(&quot;cost&quot;));</span>
+<span class="fc" id="L262">                    product.setImg(rs.getBytes(&quot;img&quot;));</span>
+<span class="fc" id="L263">                    product.setDescription(rs.getString(&quot;description&quot;));</span>
+<span class="fc" id="L264">                    product.setFigure(rs.getString(&quot;figure&quot;));  // Set the figure field</span>
+<span class="fc" id="L265">                    products.add(product);</span>
+<span class="fc" id="L266">                }</span>
             }
         }
-<span class="fc" id="L266">        return products;</span>
+<span class="fc" id="L269">        return products;</span>
     }
 
     @Override
@@ -275,16 +278,16 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures true;
       @*/
     public void updateProductQtyInCart(HttpSession session, String productId, int qty) {
-<span class="nc" id="L278">        List&lt;ProdottoBean&gt; cart = (List&lt;ProdottoBean&gt;) session.getAttribute(&quot;cart&quot;);</span>
-<span class="nc bnc" id="L279" title="All 2 branches missed.">        if (cart != null) {</span>
-<span class="nc bnc" id="L280" title="All 2 branches missed.">            for (ProdottoBean product : cart) {</span>
-<span class="nc bnc" id="L281" title="All 2 branches missed.">                if (product.getId().equals(productId)) {</span>
-<span class="nc" id="L282">                    product.setQty(qty);</span>
-<span class="nc" id="L283">                    break;</span>
+<span class="nc" id="L281">        List&lt;ProdottoBean&gt; cart = (List&lt;ProdottoBean&gt;) session.getAttribute(&quot;cart&quot;);</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">        if (cart != null) {</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">            for (ProdottoBean product : cart) {</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">                if (product.getId().equals(productId)) {</span>
+<span class="nc" id="L285">                    product.setQty(qty);</span>
+<span class="nc" id="L286">                    break;</span>
                 }
-<span class="nc" id="L285">            }</span>
+<span class="nc" id="L288">            }</span>
         }
-<span class="nc" id="L287">    }</span>
+<span class="nc" id="L290">    }</span>
 
     @Override
     /*@ public normal_behavior
@@ -294,15 +297,15 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result &gt;= 0;
       @*/
     public int getProductQtyInCart(HttpSession session, String productId) {
-<span class="nc" id="L297">        List&lt;ProdottoBean&gt; cart = (List&lt;ProdottoBean&gt;) session.getAttribute(&quot;cart&quot;);</span>
-<span class="nc bnc" id="L298" title="All 2 branches missed.">        if (cart != null) {</span>
-<span class="nc bnc" id="L299" title="All 2 branches missed.">            for (ProdottoBean product : cart) {</span>
-<span class="nc bnc" id="L300" title="All 2 branches missed.">                if (product.getId().equals(productId)) {</span>
-<span class="nc" id="L301">                    return product.getQty();</span>
+<span class="nc" id="L300">        List&lt;ProdottoBean&gt; cart = (List&lt;ProdottoBean&gt;) session.getAttribute(&quot;cart&quot;);</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">        if (cart != null) {</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">            for (ProdottoBean product : cart) {</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">                if (product.getId().equals(productId)) {</span>
+<span class="nc" id="L304">                    return product.getQty();</span>
                 }
-<span class="nc" id="L303">            }</span>
+<span class="nc" id="L306">            }</span>
         }
-<span class="nc" id="L305">        return 0;</span>
+<span class="nc" id="L308">        return 0;</span>
     }
 
     @Override
@@ -318,42 +321,42 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures available;
       @*/
     public void saveCartToDatabase(String userEmail, List&lt;ProdottoBean&gt; cart) throws SQLException {
-<span class="fc" id="L321">        String insertCartQuery = &quot;INSERT INTO Carrello (cliente_email) VALUES (?) &quot; +</span>
+<span class="fc" id="L324">        String insertCartQuery = &quot;INSERT INTO Carrello (cliente_email) VALUES (?) &quot; +</span>
                 &quot;ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)&quot;;
 
-<span class="fc" id="L324">        String insertProductCartQuery = &quot;INSERT INTO ProdottoCarrello (carrello_id, prodotto_id, quantity, unitary_cost) &quot; +</span>
+<span class="fc" id="L327">        String insertProductCartQuery = &quot;INSERT INTO ProdottoCarrello (carrello_id, prodotto_id, quantity, unitary_cost) &quot; +</span>
                 &quot;VALUES (?, ?, ?, ?) &quot; +
                 &quot;ON DUPLICATE KEY UPDATE quantity = VALUES(quantity), unitary_cost = VALUES(unitary_cost)&quot;;
 
-<span class="fc" id="L328">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L329">             PreparedStatement cartStmt = connection.prepareStatement(insertCartQuery, Statement.RETURN_GENERATED_KEYS);</span>
-<span class="fc" id="L330">             PreparedStatement productCartStmt = connection.prepareStatement(insertProductCartQuery)) {</span>
+<span class="fc" id="L331">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L332">             PreparedStatement cartStmt = connection.prepareStatement(insertCartQuery, Statement.RETURN_GENERATED_KEYS);</span>
+<span class="fc" id="L333">             PreparedStatement productCartStmt = connection.prepareStatement(insertProductCartQuery)) {</span>
 
             // Inserisci o aggiorna il carrello
-<span class="fc" id="L333">            cartStmt.setString(1, userEmail);</span>
-<span class="fc" id="L334">            cartStmt.executeUpdate();</span>
+<span class="fc" id="L336">            cartStmt.setString(1, userEmail);</span>
+<span class="fc" id="L337">            cartStmt.executeUpdate();</span>
 
             // Ottieni l'ID del carrello
             int cartId;
-<span class="fc" id="L338">            try (ResultSet rs = cartStmt.getGeneratedKeys()) {</span>
-<span class="pc bpc" id="L339" title="1 of 2 branches missed.">                if (rs.next()) {</span>
-<span class="fc" id="L340">                    cartId = rs.getInt(1);</span>
+<span class="fc" id="L341">            try (ResultSet rs = cartStmt.getGeneratedKeys()) {</span>
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">                if (rs.next()) {</span>
+<span class="fc" id="L343">                    cartId = rs.getInt(1);</span>
                 } else {
-<span class="nc" id="L342">                    throw new SQLException(&quot;Impossibile ottenere l'ID del carrello.&quot;);</span>
+<span class="nc" id="L345">                    throw new SQLException(&quot;Impossibile ottenere l'ID del carrello.&quot;);</span>
                 }
             }
 
             // Inserisci o aggiorna i prodotti nel carrello
-<span class="fc bfc" id="L347" title="All 2 branches covered.">            for (ProdottoBean product : cart) {</span>
-<span class="fc" id="L348">                productCartStmt.setInt(1, cartId);</span>
-<span class="fc" id="L349">                productCartStmt.setString(2, product.getId());</span>
-<span class="fc" id="L350">                productCartStmt.setInt(3, product.getQty());</span>
-<span class="fc" id="L351">                productCartStmt.setDouble(4, product.getCost());</span>
+<span class="fc bfc" id="L350" title="All 2 branches covered.">            for (ProdottoBean product : cart) {</span>
+<span class="fc" id="L351">                productCartStmt.setInt(1, cartId);</span>
+<span class="fc" id="L352">                productCartStmt.setString(2, product.getId());</span>
+<span class="fc" id="L353">                productCartStmt.setInt(3, product.getQty());</span>
+<span class="fc" id="L354">                productCartStmt.setDouble(4, product.getCost());</span>
 
-<span class="fc" id="L353">                productCartStmt.executeUpdate();</span>
-<span class="fc" id="L354">            }</span>
+<span class="fc" id="L356">                productCartStmt.executeUpdate();</span>
+<span class="fc" id="L357">            }</span>
         }
-<span class="fc" id="L356">    }</span>
+<span class="fc" id="L359">    }</span>
 
     @Override
     /*@ public normal_behavior
@@ -366,31 +369,31 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @           &amp;&amp; \result.get(i).getQty() &gt;= 0);
       @*/
     public List&lt;ProdottoBean&gt; getCartByUserEmail(String userEmail) throws SQLException {
-<span class="fc" id="L369">        List&lt;ProdottoBean&gt; cart = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L370">        String query = &quot;SELECT p.id, p.name, p.pieces_in_stock, p.cost, pc.quantity &quot; +</span>
+<span class="fc" id="L372">        List&lt;ProdottoBean&gt; cart = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L373">        String query = &quot;SELECT p.id, p.name, p.pieces_in_stock, p.cost, pc.quantity &quot; +</span>
                 &quot;FROM Prodotto p &quot; +
                 &quot;JOIN ProdottoCarrello pc ON p.id = pc.prodotto_id &quot; +
                 &quot;JOIN Carrello c ON pc.carrello_id = c.id &quot; +
                 &quot;WHERE c.cliente_email = ?&quot;;
 
 
-<span class="fc" id="L377">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L378">             PreparedStatement ps = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L380">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L381">             PreparedStatement ps = connection.prepareStatement(query)) {</span>
 
-<span class="fc" id="L380">            ps.setString(1, userEmail);</span>
-<span class="fc" id="L381">            try (ResultSet rs = ps.executeQuery()) {</span>
-<span class="fc bfc" id="L382" title="All 2 branches covered.">                while (rs.next()) {</span>
-<span class="fc" id="L383">                    ProdottoBean prodotto = new ProdottoBean();</span>
-<span class="fc" id="L384">                    prodotto.setId(rs.getString(&quot;id&quot;));</span>
-<span class="fc" id="L385">                    prodotto.setName(rs.getString(&quot;name&quot;));</span>
-<span class="fc" id="L386">                    prodotto.setPiecesInStock(rs.getInt(&quot;pieces_in_stock&quot;));</span>
-<span class="fc" id="L387">                    prodotto.setCost(rs.getDouble(&quot;cost&quot;));</span>
-<span class="fc" id="L388">                    prodotto.setQty(rs.getInt(&quot;quantity&quot;));</span>
-<span class="fc" id="L389">                    cart.add(prodotto);</span>
-<span class="fc" id="L390">                }</span>
+<span class="fc" id="L383">            ps.setString(1, userEmail);</span>
+<span class="fc" id="L384">            try (ResultSet rs = ps.executeQuery()) {</span>
+<span class="fc bfc" id="L385" title="All 2 branches covered.">                while (rs.next()) {</span>
+<span class="fc" id="L386">                    ProdottoBean prodotto = new ProdottoBean();</span>
+<span class="fc" id="L387">                    prodotto.setId(rs.getString(&quot;id&quot;));</span>
+<span class="fc" id="L388">                    prodotto.setName(rs.getString(&quot;name&quot;));</span>
+<span class="fc" id="L389">                    prodotto.setPiecesInStock(rs.getInt(&quot;pieces_in_stock&quot;));</span>
+<span class="fc" id="L390">                    prodotto.setCost(rs.getDouble(&quot;cost&quot;));</span>
+<span class="fc" id="L391">                    prodotto.setQty(rs.getInt(&quot;quantity&quot;));</span>
+<span class="fc" id="L392">                    cart.add(prodotto);</span>
+<span class="fc" id="L393">                }</span>
             }
         }
-<span class="fc" id="L393">        return cart;</span>
+<span class="fc" id="L396">        return cart;</span>
     }
 
     /*@ public normal_behavior
@@ -402,7 +405,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @*/
     @Override
     public void updateCartProductQuantityInDatabase(String userEmail, String productId, int qty) throws SQLException {
-<span class="fc" id="L405">        String query = &quot;&quot;&quot;</span>
+<span class="fc" id="L408">        String query = &quot;&quot;&quot;</span>
         UPDATE ProdottoCarrello
         SET quantity = ?
         WHERE prodotto_id = ?
@@ -411,16 +414,16 @@ public class ProdottoDAOImpl implements ProdottoDAO {
           )
         &quot;&quot;&quot;;
 
-<span class="fc" id="L414">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L415">             PreparedStatement stmt = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L417">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L418">             PreparedStatement stmt = connection.prepareStatement(query)) {</span>
 
-<span class="fc" id="L417">            stmt.setInt(1, qty);</span>
-<span class="fc" id="L418">            stmt.setString(2, productId);</span>
-<span class="fc" id="L419">            stmt.setString(3, userEmail);</span>
+<span class="fc" id="L420">            stmt.setInt(1, qty);</span>
+<span class="fc" id="L421">            stmt.setString(2, productId);</span>
+<span class="fc" id="L422">            stmt.setString(3, userEmail);</span>
 
-<span class="fc" id="L421">            stmt.executeUpdate();</span>
+<span class="fc" id="L424">            stmt.executeUpdate();</span>
         }
-<span class="fc" id="L423">    }</span>
+<span class="fc" id="L426">    }</span>
 
 
     /*@ public normal_behavior
@@ -431,7 +434,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @*/
     @Override
     public void removeProductFromCart(String userEmail, String productId) throws SQLException {
-<span class="fc" id="L434">        String query = &quot;&quot;&quot;</span>
+<span class="fc" id="L437">        String query = &quot;&quot;&quot;</span>
         DELETE FROM ProdottoCarrello
         WHERE prodotto_id = ?
           AND carrello_id = (
@@ -439,15 +442,15 @@ public class ProdottoDAOImpl implements ProdottoDAO {
           )
         &quot;&quot;&quot;;
 
-<span class="fc" id="L442">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L443">             PreparedStatement stmt = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L445">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L446">             PreparedStatement stmt = connection.prepareStatement(query)) {</span>
 
-<span class="fc" id="L445">            stmt.setString(1, productId);</span>
-<span class="fc" id="L446">            stmt.setString(2, userEmail);</span>
+<span class="fc" id="L448">            stmt.setString(1, productId);</span>
+<span class="fc" id="L449">            stmt.setString(2, userEmail);</span>
 
-<span class="fc" id="L448">            stmt.executeUpdate();</span>
+<span class="fc" id="L451">            stmt.executeUpdate();</span>
         }
-<span class="fc" id="L450">    }</span>
+<span class="fc" id="L453">    }</span>
 
 
     @Override
@@ -457,23 +460,23 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures available;
       @*/
     public void deleteProductById(String id) throws SQLException {
-<span class="fc" id="L460">        String deleteProductQuery = &quot;DELETE FROM Prodotto WHERE id = ?&quot;;</span>
-<span class="fc" id="L461">        String deleteFromCartQuery = &quot;DELETE FROM ProdottoCarrello WHERE prodotto_id = ?&quot;;</span>
+<span class="fc" id="L463">        String deleteProductQuery = &quot;DELETE FROM Prodotto WHERE id = ?&quot;;</span>
+<span class="fc" id="L464">        String deleteFromCartQuery = &quot;DELETE FROM ProdottoCarrello WHERE prodotto_id = ?&quot;;</span>
 
-<span class="fc" id="L463">        try (Connection connection = ds.getConnection()) {</span>
+<span class="fc" id="L466">        try (Connection connection = ds.getConnection()) {</span>
             // Rimuovi il prodotto dalla tabella ProdottoCarrello
-<span class="fc" id="L465">            try (PreparedStatement cartStatement = connection.prepareStatement(deleteFromCartQuery)) {</span>
-<span class="fc" id="L466">                cartStatement.setString(1, id);</span>
-<span class="fc" id="L467">                cartStatement.executeUpdate();</span>
+<span class="fc" id="L468">            try (PreparedStatement cartStatement = connection.prepareStatement(deleteFromCartQuery)) {</span>
+<span class="fc" id="L469">                cartStatement.setString(1, id);</span>
+<span class="fc" id="L470">                cartStatement.executeUpdate();</span>
             }
 
             // Rimuovi il prodotto dalla tabella Prodotto
-<span class="fc" id="L471">            try (PreparedStatement productStatement = connection.prepareStatement(deleteProductQuery)) {</span>
-<span class="fc" id="L472">                productStatement.setString(1, id);</span>
-<span class="fc" id="L473">                productStatement.executeUpdate();</span>
+<span class="fc" id="L474">            try (PreparedStatement productStatement = connection.prepareStatement(deleteProductQuery)) {</span>
+<span class="fc" id="L475">                productStatement.setString(1, id);</span>
+<span class="fc" id="L476">                productStatement.executeUpdate();</span>
             }
         }
-<span class="fc" id="L476">    }</span>
+<span class="fc" id="L479">    }</span>
 
     @Override
     /*@ public normal_behavior
@@ -487,36 +490,36 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result ==&gt; true;
       @*/
     public boolean updateProduct(ProdottoBean prodottoBean) {
-<span class="fc" id="L490">        String queryProdotto =</span>
+<span class="fc" id="L493">        String queryProdotto =</span>
                 &quot;UPDATE Prodotto SET name = ?, cost = ?, brand = ?, figure = ?, pieces_in_stock = ?, img = ?, description = ? WHERE id = ?&quot;;
-<span class="fc" id="L492">        String queryProdottoCarrello =</span>
+<span class="fc" id="L495">        String queryProdottoCarrello =</span>
                 &quot;UPDATE ProdottoCarrello SET unitary_cost = ? WHERE prodotto_id = ?&quot;;
 
-<span class="fc" id="L495">        try (Connection conn = ds.getConnection();</span>
-<span class="fc" id="L496">             PreparedStatement stmtProdotto = conn.prepareStatement(queryProdotto);</span>
-<span class="fc" id="L497">             PreparedStatement stmtProdottoCarrello = conn.prepareStatement(queryProdottoCarrello)) {</span>
+<span class="fc" id="L498">        try (Connection conn = ds.getConnection();</span>
+<span class="fc" id="L499">             PreparedStatement stmtProdotto = conn.prepareStatement(queryProdotto);</span>
+<span class="fc" id="L500">             PreparedStatement stmtProdottoCarrello = conn.prepareStatement(queryProdottoCarrello)) {</span>
 
-<span class="fc" id="L499">            stmtProdotto.setString(1, prodottoBean.getName());</span>
-<span class="fc" id="L500">            stmtProdotto.setDouble(2, prodottoBean.getCost());</span>
-<span class="fc" id="L501">            stmtProdotto.setString(3, prodottoBean.getBrand());</span>
-<span class="fc" id="L502">            stmtProdotto.setString(4, prodottoBean.getFigure());</span>
-<span class="fc" id="L503">            stmtProdotto.setInt(5, prodottoBean.getPiecesInStock());</span>
-<span class="fc" id="L504">            stmtProdotto.setBytes(6, prodottoBean.getImg());</span>
-<span class="fc" id="L505">            stmtProdotto.setString(7, prodottoBean.getDescription());</span>
-<span class="fc" id="L506">            stmtProdotto.setString(8, prodottoBean.getId());</span>
+<span class="fc" id="L502">            stmtProdotto.setString(1, prodottoBean.getName());</span>
+<span class="fc" id="L503">            stmtProdotto.setDouble(2, prodottoBean.getCost());</span>
+<span class="fc" id="L504">            stmtProdotto.setString(3, prodottoBean.getBrand());</span>
+<span class="fc" id="L505">            stmtProdotto.setString(4, prodottoBean.getFigure());</span>
+<span class="fc" id="L506">            stmtProdotto.setInt(5, prodottoBean.getPiecesInStock());</span>
+<span class="fc" id="L507">            stmtProdotto.setBytes(6, prodottoBean.getImg());</span>
+<span class="fc" id="L508">            stmtProdotto.setString(7, prodottoBean.getDescription());</span>
+<span class="fc" id="L509">            stmtProdotto.setString(8, prodottoBean.getId());</span>
 
-<span class="fc" id="L508">            int rowsUpdatedProdotto = stmtProdotto.executeUpdate();</span>
+<span class="fc" id="L511">            int rowsUpdatedProdotto = stmtProdotto.executeUpdate();</span>
 
             // opzionale: aggiorna carrello se esiste
-<span class="fc" id="L511">            stmtProdottoCarrello.setDouble(1, prodottoBean.getCost());</span>
-<span class="fc" id="L512">            stmtProdottoCarrello.setString(2, prodottoBean.getId());</span>
-<span class="fc" id="L513">            stmtProdottoCarrello.executeUpdate();</span>
+<span class="fc" id="L514">            stmtProdottoCarrello.setDouble(1, prodottoBean.getCost());</span>
+<span class="fc" id="L515">            stmtProdottoCarrello.setString(2, prodottoBean.getId());</span>
+<span class="fc" id="L516">            stmtProdottoCarrello.executeUpdate();</span>
 
-<span class="pc bpc" id="L515" title="1 of 2 branches missed.">            return rowsUpdatedProdotto &gt; 0;</span>
+<span class="pc bpc" id="L518" title="1 of 2 branches missed.">            return rowsUpdatedProdotto &gt; 0;</span>
 
-<span class="nc" id="L517">        } catch (SQLException e) {</span>
-<span class="nc" id="L518">            e.printStackTrace();</span>
-<span class="nc" id="L519">            return false;</span>
+<span class="nc" id="L520">        } catch (SQLException e) {</span>
+<span class="nc" id="L521">            LOGGER.log(Level.SEVERE, &quot;SQL error in updateProduct&quot;, e);</span>
+<span class="nc" id="L522">            return false;</span>
         }
     }
 
@@ -528,18 +531,18 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures available;
       @*/
     public void updateStock(String productId, int quantity) throws SQLException {
-<span class="fc" id="L531">        String query = &quot;UPDATE Prodotto SET pieces_in_stock = CASE WHEN ? &lt;= 0 THEN 10 ELSE ? END WHERE id = ?&quot;;</span>
+<span class="fc" id="L534">        String query = &quot;UPDATE Prodotto SET pieces_in_stock = CASE WHEN ? &lt;= 0 THEN 10 ELSE ? END WHERE id = ?&quot;;</span>
 
-<span class="fc" id="L533">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L534">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L536">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L537">             PreparedStatement statement = connection.prepareStatement(query)) {</span>
 
-<span class="fc" id="L536">            statement.setInt(1, quantity);  // Controlla se la quantità è &lt;= 0</span>
-<span class="fc" id="L537">            statement.setInt(2, quantity);  // Usa la stessa quantità se non scende a 0</span>
-<span class="fc" id="L538">            statement.setString(3, productId);  // ID del prodotto</span>
+<span class="fc" id="L539">            statement.setInt(1, quantity);  // Controlla se la quantità è &lt;= 0</span>
+<span class="fc" id="L540">            statement.setInt(2, quantity);  // Usa la stessa quantità se non scende a 0</span>
+<span class="fc" id="L541">            statement.setString(3, productId);  // ID del prodotto</span>
 
-<span class="fc" id="L540">            statement.executeUpdate();</span>
+<span class="fc" id="L543">            statement.executeUpdate();</span>
         }
-<span class="fc" id="L542">    }</span>
+<span class="fc" id="L545">    }</span>
 
     /*@ public normal_behavior
       @   requires productId1 != null &amp;&amp; !productId1.isEmpty()
@@ -548,21 +551,21 @@ public class ProdottoDAOImpl implements ProdottoDAO {
       @   ensures \result ==&gt; true || !\result;
       @*/
     public boolean isAssociatedWith(String productId1, String productId2) throws SQLException {
-<span class="fc" id="L551">        String query = &quot;SELECT COUNT(*) FROM ProductAssociations WHERE product_id_1 = ? AND product_id_2 = ?&quot;;</span>
+<span class="fc" id="L554">        String query = &quot;SELECT COUNT(*) FROM ProductAssociations WHERE product_id_1 = ? AND product_id_2 = ?&quot;;</span>
 
-<span class="fc" id="L553">        try (Connection connection = ds.getConnection();</span>
-<span class="fc" id="L554">             PreparedStatement preparedStatement = connection.prepareStatement(query)) {</span>
+<span class="fc" id="L556">        try (Connection connection = ds.getConnection();</span>
+<span class="fc" id="L557">             PreparedStatement preparedStatement = connection.prepareStatement(query)) {</span>
 
-<span class="fc" id="L556">            preparedStatement.setString(1, productId1);</span>
-<span class="fc" id="L557">            preparedStatement.setString(2, productId2);</span>
+<span class="fc" id="L559">            preparedStatement.setString(1, productId1);</span>
+<span class="fc" id="L560">            preparedStatement.setString(2, productId2);</span>
 
-<span class="fc" id="L559">            try (ResultSet resultSet = preparedStatement.executeQuery()) {</span>
-<span class="pc bpc" id="L560" title="1 of 2 branches missed.">                if (resultSet.next()) {</span>
-<span class="fc bfc" id="L561" title="All 2 branches covered.">                    return resultSet.getInt(1) &gt; 0;</span>
+<span class="fc" id="L562">            try (ResultSet resultSet = preparedStatement.executeQuery()) {</span>
+<span class="pc bpc" id="L563" title="1 of 2 branches missed.">                if (resultSet.next()) {</span>
+<span class="fc bfc" id="L564" title="All 2 branches covered.">                    return resultSet.getInt(1) &gt; 0;</span>
                 }
-<span class="pc bpc" id="L563" title="1 of 2 branches missed.">            }</span>
-<span class="pc bpc" id="L564" title="2 of 4 branches missed.">        }</span>
-<span class="nc" id="L565">        return false;</span>
+<span class="pc bpc" id="L566" title="1 of 2 branches missed.">            }</span>
+<span class="pc bpc" id="L567" title="2 of 4 branches missed.">        }</span>
+<span class="nc" id="L568">        return false;</span>
     }
 
 

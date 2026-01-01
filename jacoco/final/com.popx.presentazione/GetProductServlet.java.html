@@ -12,7 +12,7 @@ import java.io.IOException;
 @WebServlet(name = &quot;GetProductServlet&quot;, urlPatterns = {&quot;/getProduct&quot;})
 public class GetProductServlet extends HttpServlet {
 
-    private ProdottoDAO prodottoDAO;
+    private final ProdottoDAO prodottoDAO;
 
     // 🔹 costruttore production
 <span class="nc" id="L18">    public GetProductServlet() {</span>

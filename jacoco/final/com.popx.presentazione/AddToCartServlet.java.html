@@ -35,63 +35,74 @@ public class AddToCartServlet extends HttpServlet {
             throws ServletException, IOException {
 
 <span class="fc" id="L37">        String productId = request.getParameter(&quot;productId&quot;);</span>
-<span class="fc" id="L38">        int quantity = Integer.parseInt(request.getParameter(&quot;quantity&quot;));</span>
+<span class="fc" id="L38">        String qtyParam = request.getParameter(&quot;quantity&quot;);</span>
 
-<span class="fc" id="L40">        HttpSession session = request.getSession();</span>
-<span class="fc" id="L41">        String userEmail = (String) session.getAttribute(&quot;userEmail&quot;);</span>
+        int quantity;
+        try {
+<span class="fc" id="L42">            quantity = Integer.parseInt(qtyParam);</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            if (quantity &lt;= 0) {</span>
+<span class="nc" id="L44">                writeJson(response, false, &quot;Quantità non valida.&quot;);</span>
+<span class="nc" id="L45">                return;</span>
+            }
+<span class="nc" id="L47">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L48">            writeJson(response, false, &quot;Quantità non valida.&quot;);</span>
+<span class="nc" id="L49">            return;</span>
+<span class="fc" id="L50">        }</span>
+
+<span class="fc" id="L52">        HttpSession session = request.getSession();</span>
+<span class="fc" id="L53">        String userEmail = (String) session.getAttribute(&quot;userEmail&quot;);</span>
 
         // 🔐 controllo ruolo
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (userEmail != null) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (userEmail != null) {</span>
             try {
-<span class="fc" id="L46">                UserBean userBean = userDAO.getUserByEmail(userEmail);</span>
-<span class="pc bpc" id="L47" title="2 of 4 branches missed.">                if (userBean != null &amp;&amp; !&quot;User&quot;.equals(userBean.getRole())) {</span>
-<span class="fc" id="L48">                    writeJson(response, false,</span>
+<span class="fc" id="L58">                UserBean userBean = userDAO.getUserByEmail(userEmail);</span>
+<span class="pc bpc" id="L59" title="2 of 4 branches missed.">                if (userBean != null &amp;&amp; !&quot;User&quot;.equals(userBean.getRole())) {</span>
+<span class="fc" id="L60">                    writeJson(response, false,</span>
                             &quot;Accesso negato: solo gli utenti con il ruolo 'User' possono aggiungere prodotti al carrello.&quot;);
-<span class="fc" id="L50">                    return;</span>
+<span class="fc" id="L62">                    return;</span>
                 }
-<span class="fc" id="L52">            } catch (SQLException e) {</span>
-<span class="fc" id="L53">                writeJson(response, false, &quot;Errore interno durante il controllo dei permessi.&quot;);</span>
-<span class="fc" id="L54">                return;</span>
-<span class="nc" id="L55">            }</span>
+<span class="fc" id="L64">            } catch (SQLException e) {</span>
+<span class="fc" id="L65">                writeJson(response, false, &quot;Errore interno durante il controllo dei permessi.&quot;);</span>
+<span class="fc" id="L66">                return;</span>
+<span class="nc" id="L67">            }</span>
         }
 
-        // 🛒 carrello
-<span class="fc" id="L59">        List&lt;ProdottoBean&gt; cart = (List&lt;ProdottoBean&gt;) session.getAttribute(&quot;cart&quot;);</span>
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (cart == null) {</span>
-<span class="fc" id="L61">            cart = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L62">            session.setAttribute(&quot;cart&quot;, cart);</span>
+<span class="fc" id="L70">        List&lt;ProdottoBean&gt; cart = (List&lt;ProdottoBean&gt;) session.getAttribute(&quot;cart&quot;);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (cart == null) {</span>
+<span class="fc" id="L72">            cart = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L73">            session.setAttribute(&quot;cart&quot;, cart);</span>
         }
 
-<span class="fc" id="L65">        ProdottoBean prodotto = prodottoDAO.getProdottoById(productId);</span>
-
-<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (prodotto == null) {</span>
-<span class="fc" id="L68">            writeJson(response, false, &quot;Errore nell'aggiungere il prodotto al carrello.&quot;);</span>
-<span class="fc" id="L69">            return;</span>
+<span class="fc" id="L76">        ProdottoBean prodotto = prodottoDAO.getProdottoById(productId);</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (prodotto == null) {</span>
+<span class="fc" id="L78">            writeJson(response, false, &quot;Prodotto non trovato.&quot;);</span>
+<span class="fc" id="L79">            return;</span>
         }
 
-<span class="fc bfc" id="L72" title="All 2 branches covered.">        for (ProdottoBean cartItem : cart) {</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if (cartItem.getId().equals(prodotto.getId())) {</span>
-<span class="fc" id="L74">                int currentQty = prodottoDAO.getProductQtyInCart(session, productId);</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">                if (currentQty + quantity &lt;= prodotto.getPiecesInStock()) {</span>
-<span class="fc" id="L76">                    prodottoDAO.updateProductQtyInCart(session, productId, currentQty + quantity);</span>
-<span class="fc" id="L77">                    writeJson(response, true, &quot;Prodotto aggiunto al carrello!&quot;);</span>
-<span class="fc" id="L78">                    return;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        for (ProdottoBean cartItem : cart) {</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            if (cartItem.getId().equals(prodotto.getId())) {</span>
+<span class="fc" id="L84">                int currentQty = prodottoDAO.getProductQtyInCart(session, productId);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                if (currentQty + quantity &lt;= prodotto.getPiecesInStock()) {</span>
+<span class="fc" id="L86">                    prodottoDAO.updateProductQtyInCart(session, productId, currentQty + quantity);</span>
+<span class="fc" id="L87">                    writeJson(response, true, &quot;Prodotto aggiunto al carrello!&quot;);</span>
+<span class="fc" id="L88">                    return;</span>
                 } else {
-<span class="fc" id="L80">                    writeJson(response, false, &quot;Quantità non disponibile nel magazzino.&quot;);</span>
-<span class="fc" id="L81">                    return;</span>
+<span class="fc" id="L90">                    writeJson(response, false, &quot;Quantità non disponibile nel magazzino.&quot;);</span>
+<span class="fc" id="L91">                    return;</span>
                 }
             }
-<span class="nc" id="L84">        }</span>
+<span class="nc" id="L94">        }</span>
 
-<span class="fc" id="L86">        cart.add(prodotto);</span>
-<span class="fc" id="L87">        prodottoDAO.updateProductQtyInCart(session, productId, quantity);</span>
-<span class="fc" id="L88">        writeJson(response, true, &quot;Prodotto aggiunto al carrello!&quot;);</span>
-<span class="fc" id="L89">    }</span>
+<span class="fc" id="L96">        cart.add(prodotto);</span>
+<span class="fc" id="L97">        prodottoDAO.updateProductQtyInCart(session, productId, quantity);</span>
+<span class="fc" id="L98">        writeJson(response, true, &quot;Prodotto aggiunto al carrello!&quot;);</span>
+<span class="fc" id="L99">    }</span>
+
 
     private void writeJson(HttpServletResponse response, boolean success, String message) throws IOException {
-<span class="fc" id="L92">        response.setContentType(&quot;application/json&quot;);</span>
-<span class="fc" id="L93">        response.getWriter()</span>
-<span class="fc" id="L94">                .write(&quot;{\&quot;success\&quot;: &quot; + success + &quot;, \&quot;message\&quot;: \&quot;&quot; + message + &quot;\&quot;}&quot;);</span>
-<span class="fc" id="L95">    }</span>
+<span class="fc" id="L103">        response.setContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L104">        response.getWriter()</span>
+<span class="fc" id="L105">                .write(&quot;{\&quot;success\&quot;: &quot; + success + &quot;, \&quot;message\&quot;: \&quot;&quot; + message + &quot;\&quot;}&quot;);</span>
+<span class="fc" id="L106">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
