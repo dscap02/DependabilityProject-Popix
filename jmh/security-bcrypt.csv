@@ -1,0 +1,7 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: passwordLen"
+"com.popx.benchmark.SecurityServiceBCryptBenchmark.checkPassword","avgt",1,5,"210,265023","2,246156","ms/op",12
+"com.popx.benchmark.SecurityServiceBCryptBenchmark.checkPassword","avgt",1,5,"210,323450","3,385986","ms/op",24
+"com.popx.benchmark.SecurityServiceBCryptBenchmark.checkPassword","avgt",1,5,"210,515785","2,230069","ms/op",48
+"com.popx.benchmark.SecurityServiceBCryptBenchmark.hashPassword","avgt",1,5,"217,563460","30,204416","ms/op",12
+"com.popx.benchmark.SecurityServiceBCryptBenchmark.hashPassword","avgt",1,5,"211,416417","3,159534","ms/op",24
+"com.popx.benchmark.SecurityServiceBCryptBenchmark.hashPassword","avgt",1,5,"211,866212","1,463267","ms/op",48

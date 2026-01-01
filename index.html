@@ -2,89 +2,328 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pop!x – Test Coverage & Mutation Analysis</title>
+    <title>Pop!x – Test Coverage, Mutation Analysis & JMH Benchmarks</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- ===== STILE (INVARIATO) ===== -->
     <style>
+        :root {
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #ffffff;
+            --bg-soft: #f9fafb;
+            --head: #111827;
+            --link: #2563eb;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            max-width: 900px;
+            max-width: 980px;
             margin: 40px auto;
+            padding: 0 16px;
             line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
         }
-        h1, h2 {
-            color: #333;
+
+        h1, h2, h3 {
+            color: var(--head);
+            line-height: 1.25;
         }
-        ul {
-            margin-left: 20px;
+
+        h1 { margin-bottom: 10px; font-size: 2rem; }
+        h2 { margin-top: 42px; font-size: 1.45rem; }
+        h3 { margin-top: 24px; font-size: 1.15rem; }
+
+        p { margin: 10px 0; }
+        .muted { color: var(--muted); }
+
+        a { color: var(--link); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        ul { margin-left: 20px; }
+
+        .section {
+            margin-top: 18px;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-soft);
+        }
+
+        .note {
+            border-left: 4px solid var(--border);
+            padding: 10px 12px;
+            background: #fff;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px 10px;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 700;
+        }
+
+        td.wrap {
+            white-space: normal;
+            word-break: break-word;
+            max-width: 520px;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        @media (min-width: 860px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .footer {
+            margin-top: 48px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.95rem;
         }
     </style>
+
+    <script>
+        async function loadCSV(url, tableId, columns, labels) {
+            const response = await fetch(url);
+            const text = await response.text();
+
+            const lines = text.trim().split('\n');
+            const headers = parseCSVLine(lines[0]).map(cleanCell);
+
+            const table = document.getElementById(tableId);
+            const thead = table.querySelector('thead tr');
+            const tbody = table.querySelector('tbody');
+
+            thead.innerHTML = '';
+            columns.forEach(col => {
+                const th = document.createElement('th');
+                th.textContent = labels[col] || col;
+                thead.appendChild(th);
+            });
+
+            tbody.innerHTML = '';
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]).map(cleanCell);
+                const row = {};
+                headers.forEach((h, idx) => row[h] = values[idx]);
+
+                const tr = document.createElement('tr');
+                columns.forEach(col => {
+                    const td = document.createElement('td');
+                    td.textContent = row[col] ?? '';
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            }
+        }
+
+        function parseCSVLine(line) {
+            const regex = /("([^"]|"")*"|[^,]+)/g;
+            return line.match(regex) || [];
+        }
+
+        function cleanCell(value) {
+            if (!value) return '';
+            return value
+                .replace(/^"|"$/g, '')
+                .replace(/""/g, '"')
+                .replace('com.popx.benchmark.', '')
+                .replace('CarrelloSubtotalBenchmark.', '')
+                .replace('CatalogFilteringBenchmark.', '')
+                .replace('SecurityServiceBCryptBenchmark.', '');
+        }
+
+        // Load tables
+        loadCSV(
+            'jmh/carrello-subtotal.csv',
+            'carrello-table',
+            [
+                'Benchmark',
+                'Mode',
+                'Threads',
+                'Samples',
+                'Param: cartSize',
+                'Score',
+                'Score Error (99,9%)',
+                'Unit'
+            ],
+            {
+                'Param: cartSize': 'cartSize',
+                'Score Error (99,9%)': 'Error (99.9%)',
+                'Unit': 'Units'
+            }
+        );
+
+        loadCSV(
+            'jmh/catalog-filtering.csv',
+            'catalog-table',
+            [
+                'Benchmark',
+                'Mode',
+                'Threads',
+                'Samples',
+                'Param: catalogSize',
+                'Score',
+                'Score Error (99,9%)',
+                'Unit'
+            ],
+            {
+                'Param: catalogSize': 'catalogSize',
+                'Score Error (99,9%)': 'Error (99.9%)',
+                'Unit': 'Units'
+            }
+        );
+
+        loadCSV(
+            'jmh/security-bcrypt.csv',
+            'bcrypt-table',
+            [
+                'Benchmark',
+                'Mode',
+                'Threads',
+                'Samples',
+                'Param: passwordLen',
+                'Score',
+                'Score Error (99,9%)',
+                'Unit'
+            ],
+            {
+                'Param: passwordLen': 'passwordLen',
+                'Score Error (99,9%)': 'Error (99.9%)',
+                'Unit': 'Units'
+            }
+        );
+    </script>
 </head>
+
 <body>
 
-<h1>Pop!x – Test Coverage and Mutation Analysis</h1>
+<h1>Pop!x – Test Coverage, Mutation Analysis & JMH Benchmarks</h1>
 
 <p>
-    This page documents the evolution of <strong>test quality metrics</strong> for the Pop!x project.
-    Static analysis artifacts are published via <strong>GitHub Pages</strong> to ensure transparency
-    and reproducibility.
+    This page documents the evolution of <strong>test quality metrics</strong> and
+    <strong>performance characteristics</strong> for the Pop!x project.
 </p>
 
-<!-- ===================== JACOCO ===================== -->
+<!-- ===== JACOCO & PITEST (INVARIATI) ===== -->
 
-<h2>JaCoCo – Code Coverage Evolution</h2>
 
-<p>
-    Code coverage reports are generated using <strong>JaCoCo</strong> and illustrate how coverage
-    evolves as different testing strategies are introduced (unit and integration testing).
-</p>
+<h2>JaCoCo &amp; PiTest — Code Coverage and Mutation Testing Reports</h2>
 
-<ul>
-    <li>
-        <a href="jacoco/baseline/index.html">Baseline coverage</a>
-        – Initial state before testing activities
-    </li>
-    <li>
-        <a href="jacoco/after-unit-tests/index.html">After unit tests</a>
-        – Coverage after unit-level testing (model and service layers)
-    </li>
-    <li>
-        <a href="jacoco/after-integration-tests/index.html">After integration tests</a>
-        – Coverage including presentation and persistence flows
-    </li>
-    <li>
-        <a href="jacoco/final/index.html">Final coverage</a>
-        – Consolidated project coverage
-    </li>
-</ul>
+<div class="grid">
+    <div class="section">
+        <h2 style="margin-top:0;">JaCoCo – Code Coverage Evolution</h2>
+        <p class="muted">
+            Code coverage reports are generated using <strong>JaCoCo</strong> and illustrate how coverage evolves
+            as different testing strategies are introduced (unit and integration testing).
+        </p>
+        <ul>
+            <li><a href="jacoco/baseline/index.html">Baseline coverage</a> – Initial state before testing activities</li>
+            <li><a href="jacoco/after-unit-tests/index.html">After unit tests</a> – Coverage after unit-level testing (model and service layers)</li>
+            <li><a href="jacoco/after-integration-tests/index.html">After integration tests</a> – Coverage including presentation and persistence flows</li>
+            <li><a href="jacoco/final/index.html">Final coverage</a> – Consolidated project coverage</li>
+        </ul>
+    </div>
 
-<!-- ===================== PITEST ===================== -->
+    <div class="section">
+        <h2 style="margin-top:0;">PiTest – Mutation Testing Campaign</h2>
+        <p class="muted">
+            Mutation testing was conducted using <strong>PiTest</strong> to evaluate the effectiveness of the unit test suite
+            in detecting injected faults. Due to its computational cost, mutation analysis was executed as a dedicated campaign
+            rather than as part of the continuous integration pipeline.
+        </p>
+        <ul>
+            <li><a href="pitest/baseline/index.html">Baseline mutation analysis</a> – Initial mutation testing campaign</li>
+            <li><a href="pitest/final/index.html">Final mutation analysis</a> – Consolidated mutation testing results after test evaluation</li>
+        </ul>
+    </div>
+</div>
 
-<h2>PiTest – Mutation Testing Campaign</h2>
 
-<p>
-    Mutation testing was conducted using <strong>PiTest</strong> to evaluate the effectiveness
-    of the unit test suite in detecting injected faults.
-    Due to its computational cost, mutation analysis was executed as a dedicated campaign
-    rather than as part of the continuous integration pipeline.
-</p>
+<!-- ===== JMH (CORRETTO) ===== -->
 
-<ul>
-    <li>
-        <a href="pitest/baseline/index.html">Baseline mutation analysis</a>
-        – Initial mutation testing campaign
-    </li>
-    <li>
-        <a href="pitest/final/index.html">Final mutation analysis</a>
-        – Consolidated mutation testing results after test evaluation
-    </li>
-</ul>
+<h2>JMH – Microbenchmark Results <span class="pill">CSV-backed</span></h2>
 
-<h2>Notes</h2>
+<div class="section">
+    <h3 style="margin-top:0;">Cart Subtotal Calculation</h3>
+    <p class="muted">
+        Comparison between a traditional <code>for</code> loop and Java Streams for subtotal computation over different cart sizes.
+        <br/>CSV: <a href="jmh/carrello-subtotal.csv">carrello-subtotal.csv</a>
+    </p>
+    <table id="carrello-table">
+        <thead><tr></tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
 
-<p>
-    Both coverage and mutation analysis include only project-owned code and intentionally exclude
-    third-party libraries and framework-dependent components to ensure meaningful and academically
-    valid metrics.
-</p>
+<div class="section">
+    <h3 style="margin-top:0;">Catalog Filtering</h3>
+    <p class="muted">
+        Benchmark of catalog filtering logic (loop vs streams) as input size grows.
+        <br/>CSV: <a href="jmh/catalog-filtering.csv">catalog-filtering.csv</a>
+    </p>
+    <table id="catalog-table">
+        <thead><tr></tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div class="section">
+    <h3 style="margin-top:0;">BCrypt Password Hashing &amp; Verification</h3>
+    <p class="muted">
+        Benchmark of BCrypt hashing and password verification for different password lengths.
+        <br/>CSV: <a href="jmh/security-bcrypt.csv">security-bcrypt.csv</a>
+    </p>
+    <table id="bcrypt-table">
+        <thead><tr></tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div class="footer">
+    Generated artifacts are hosted via GitHub Pages for reproducibility and easy access.
+</div>
 
 </body>
 </html>

@@ -1,0 +1,7 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: catalogSize"
+"com.popx.benchmark.CatalogFilteringBenchmark.filterWithForLoop","avgt",1,5,"0,079918","0,000278","us/op",30
+"com.popx.benchmark.CatalogFilteringBenchmark.filterWithForLoop","avgt",1,5,"0,601465","0,003089","us/op",300
+"com.popx.benchmark.CatalogFilteringBenchmark.filterWithForLoop","avgt",1,5,"7,279013","0,020708","us/op",3000
+"com.popx.benchmark.CatalogFilteringBenchmark.filterWithStreams","avgt",1,5,"0,237325","0,001387","us/op",30
+"com.popx.benchmark.CatalogFilteringBenchmark.filterWithStreams","avgt",1,5,"1,566259","0,016998","us/op",300
+"com.popx.benchmark.CatalogFilteringBenchmark.filterWithStreams","avgt",1,5,"15,213169","0,246184","us/op",3000

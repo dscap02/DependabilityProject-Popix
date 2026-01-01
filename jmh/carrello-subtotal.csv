@@ -1,0 +1,7 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: cartSize"
+"com.popx.benchmark.CarrelloSubtotalBenchmark.subtotalWithForLoop","avgt",1,5,"5,585124","0,048797","ns/op",10
+"com.popx.benchmark.CarrelloSubtotalBenchmark.subtotalWithForLoop","avgt",1,5,"44,269333","0,258210","ns/op",100
+"com.popx.benchmark.CarrelloSubtotalBenchmark.subtotalWithForLoop","avgt",1,5,"626,583661","6,635694","ns/op",1000
+"com.popx.benchmark.CarrelloSubtotalBenchmark.subtotalWithStreams","avgt",1,5,"58,447063","3,541506","ns/op",10
+"com.popx.benchmark.CarrelloSubtotalBenchmark.subtotalWithStreams","avgt",1,5,"500,724624","3,940009","ns/op",100
+"com.popx.benchmark.CarrelloSubtotalBenchmark.subtotalWithStreams","avgt",1,5,"3137,750001","96,293121","ns/op",1000
