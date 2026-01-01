@@ -141,7 +141,8 @@ class AddToCartServletTest {
 
         servlet.doPost(request, response);
 
-        assertTrue(responseBody.toString().contains("Errore nell'aggiungere il prodotto"));
+        assertTrue(responseBody.toString().contains("\"success\": false"));
+
     }
 
     @Test

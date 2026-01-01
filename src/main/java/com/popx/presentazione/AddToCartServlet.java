@@ -35,7 +35,19 @@ public class AddToCartServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String productId = request.getParameter("productId");
-        int quantity = Integer.parseInt(request.getParameter("quantity"));
+        String qtyParam = request.getParameter("quantity");
+
+        int quantity;
+        try {
+            quantity = Integer.parseInt(qtyParam);
+            if (quantity <= 0) {
+                writeJson(response, false, "Quantità non valida.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            writeJson(response, false, "Quantità non valida.");
+            return;
+        }
 
         HttpSession session = request.getSession();
         String userEmail = (String) session.getAttribute("userEmail");
@@ -55,7 +67,6 @@ public class AddToCartServlet extends HttpServlet {
             }
         }
 
-        // 🛒 carrello
         List<ProdottoBean> cart = (List<ProdottoBean>) session.getAttribute("cart");
         if (cart == null) {
             cart = new ArrayList<>();
@@ -63,9 +74,8 @@ public class AddToCartServlet extends HttpServlet {
         }
 
         ProdottoBean prodotto = prodottoDAO.getProdottoById(productId);
-
         if (prodotto == null) {
-            writeJson(response, false, "Errore nell'aggiungere il prodotto al carrello.");
+            writeJson(response, false, "Prodotto non trovato.");
             return;
         }
 
@@ -87,6 +97,7 @@ public class AddToCartServlet extends HttpServlet {
         prodottoDAO.updateProductQtyInCart(session, productId, quantity);
         writeJson(response, true, "Prodotto aggiunto al carrello!");
     }
+
 
     private void writeJson(HttpServletResponse response, boolean success, String message) throws IOException {
         response.setContentType("application/json");
