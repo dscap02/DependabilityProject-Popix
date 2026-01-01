@@ -20,14 +20,14 @@
 
     <div class="icons">
         <a href="${pageContext.request.contextPath}/jsp/Cart.jsp"
-           class="fas fa-shopping-cart"></a>
+           class="fas fa-shopping-cart" aria-label="carrello"></a>
 
         <%
             Object role = session.getAttribute("role");
             if (role == null) {
         %>
         <a href="${pageContext.request.contextPath}/jsp/Login.jsp"
-           class="fas fa-sign-in-alt"></a>
+           class="fas fa-sign-in-alt" aria-label="login"></a>
         <%
         } else {
         %>
@@ -39,7 +39,7 @@
            class="fas fa-user<%=
                 role.equals("Gestore") ? "-cog" :
                 role.equals("Admin") ? "-shield" :
-                "" %>">
+                "" %>" aria-label="user-dashboard">
         </a>
 
         <a href="${pageContext.request.contextPath}/logout"
