@@ -2,23 +2,21 @@ package com.popx.modello;
 
 import java.util.List;
 
-/*@
-  @ public invariant clienteEmail == null
-  @                 || !clienteEmail.isEmpty();
-  @
-  @ public invariant prodottiCarrello == null
-  @                 || (\forall int i;
-  @                        0 <= i && i < prodottiCarrello.size();
-  @                        prodottiCarrello.get(i) != null);
-  @*/
 public class CarrelloBean {
+
+    //@ invariant clienteEmail == null || !clienteEmail.isEmpty();
+
+    //@ invariant prodottiCarrello == null
+    //@        || (\forall int i;
+    //@               0 <= i && i < prodottiCarrello.size();
+    //@               prodottiCarrello.get(i) != null);
 
     private String clienteEmail;
     private List<ProdottoCarrelloBean> prodottiCarrello;
 
     /*@
-      @ ensures this.clienteEmail == null;
-      @ ensures this.prodottiCarrello == null;
+      @ ensures clienteEmail == null;
+      @ ensures prodottiCarrello == null;
       @*/
     public CarrelloBean() {}
 
@@ -32,7 +30,8 @@ public class CarrelloBean {
       @ ensures this.clienteEmail == clienteEmail;
       @ ensures this.prodottiCarrello == prodottiCarrello;
       @*/
-    public CarrelloBean(String clienteEmail, List<ProdottoCarrelloBean> prodottiCarrello) {
+    public CarrelloBean(String clienteEmail,
+                        List<ProdottoCarrelloBean> prodottiCarrello) {
         this.clienteEmail = clienteEmail;
         this.prodottiCarrello = prodottiCarrello;
     }
@@ -62,7 +61,8 @@ public class CarrelloBean {
       @              prodottiCarrello.get(i) != null);
       @ ensures this.prodottiCarrello == prodottiCarrello;
       @*/
-    public void setProdottiCarrello(List<ProdottoCarrelloBean> prodottiCarrello) {
+    public void setProdottiCarrello(
+            List<ProdottoCarrelloBean> prodottiCarrello) {
         this.prodottiCarrello = prodottiCarrello;
     }
 }

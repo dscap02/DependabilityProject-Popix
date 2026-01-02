@@ -15,11 +15,6 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     private final DataSource ds;
     private static final Logger LOGGER = Logger.getLogger(ProdottoDAOImpl.class.getName());
 
-    /*@ public model boolean available;
-      @ public invariant ds != null && available;
-      @ represents available <- ds != null;
-      @*/
-
     public ProdottoDAOImpl(DataSource ds) {
         this.ds = ds;
     }
@@ -29,16 +24,6 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires prodotto != null
-      @        && prodotto.getId() != null && !prodotto.getId().isEmpty()
-      @        && prodotto.getName() != null && !prodotto.getName().isEmpty()
-      @        && prodotto.getBrand() != null && !prodotto.getBrand().isEmpty()
-      @        && prodotto.getCost() >= 0
-      @        && prodotto.getPiecesInStock() >= 0;
-      @   assignable \everything;
-      @   ensures \result ==> true;
-      @*/
     public boolean saveProdotto(ProdottoBean prodotto) {
         String query = "INSERT INTO Prodotto (id, name, description, cost, pieces_in_stock, brand, img, figure) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = ds.getConnection();
@@ -59,11 +44,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires id != null && !id.isEmpty();
-      @   assignable \everything;
-      @   ensures \result == null || \result.getId().equals(id);
-      @*/
+
     public ProdottoBean getProdottoById(String id) {
         String query = "SELECT * FROM Prodotto WHERE id = ?";
         try (Connection connection = ds.getConnection();
@@ -89,14 +70,6 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires brand != null && !brand.isEmpty();
-      @   assignable \everything;
-      @   ensures \result != null
-      @        && (\forall int i; 0 <= i && i < \result.size();
-      @              \result.get(i) != null
-      @           && brand.equals(\result.get(i).getBrand()));
-      @*/
     public List<ProdottoBean> getProdottiByBrand(String brand) {
         List<ProdottoBean> prodotti = new ArrayList<>();
         String query = "SELECT * FROM Prodotto WHERE brand = ?";
@@ -123,14 +96,6 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires brand != null && !brand.isEmpty();
-      @   assignable \everything;
-      @   ensures \result != null
-      @        && (\forall int i; 0 <= i && i < \result.size();
-      @              \result.get(i) != null
-      @           && brand.equals(\result.get(i).getBrand()));
-      @*/
     public List<ProdottoBean> getProdottiByBrandAndPrice(String brand, boolean ascending) {
         List<ProdottoBean> prodotti = new ArrayList<>();
         String query = "SELECT * FROM Prodotto WHERE brand = ? ORDER BY cost " + (ascending ? "ASC" : "DESC");
@@ -157,10 +122,6 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   assignable \everything;
-      @   ensures \result != null;
-      @*/
     public List<ProdottoBean> getProdottiSortedByPrice(boolean ascending) {
         List<ProdottoBean> prodotti = new ArrayList<>();
         String query = "SELECT * FROM Prodotto ORDER BY cost " + (ascending ? "ASC" : "DESC");
@@ -186,11 +147,6 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires id != null && !id.isEmpty();
-      @   assignable \everything;
-      @   ensures \result == null || \result.length >= 0;
-      @*/
     public byte[] getProductImageById(String id) {
         String query = "SELECT img FROM Prodotto WHERE id = ?";
         try (Connection connection = ds.getConnection();
@@ -207,10 +163,6 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   assignable \everything;
-      @   ensures \result != null;
-      @*/
     public List<ProdottoBean> getAllProducts() {
         List<ProdottoBean> products = new ArrayList<>();
         String query = "SELECT * FROM Prodotto ORDER BY id";
@@ -238,11 +190,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
 
 
     @Override
-    /*@ public normal_behavior
-      @   requires limit > 0;
-      @   assignable \everything;
-      @   ensures \result != null && \result.size() <= limit;
-      @*/
+
     public List<ProdottoBean> getRandomProducts(int limit) throws SQLException {
         List<ProdottoBean> products = new ArrayList<>();
         String query = "SELECT * FROM Prodotto ORDER BY RAND() LIMIT ?";  // Usato ORDER BY RAND() per ottenere risultati casuali
@@ -270,13 +218,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires session != null
-      @        && productId != null && !productId.isEmpty()
-      @        && qty >= 0;
-      @   assignable \everything;
-      @   ensures true;
-      @*/
+
     public void updateProductQtyInCart(HttpSession session, String productId, int qty) {
         List<ProdottoBean> cart = (List<ProdottoBean>) session.getAttribute("cart");
         if (cart != null) {
@@ -290,12 +232,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires session != null
-      @        && productId != null && !productId.isEmpty();
-      @   assignable \everything;
-      @   ensures \result >= 0;
-      @*/
+
     public int getProductQtyInCart(HttpSession session, String productId) {
         List<ProdottoBean> cart = (List<ProdottoBean>) session.getAttribute("cart");
         if (cart != null) {
@@ -309,17 +246,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires userEmail != null && !userEmail.isEmpty()
-      @        && cart != null
-      @        && (\forall int i; 0 <= i && i < cart.size();
-      @              cart.get(i) != null
-      @           && cart.get(i).getId() != null && !cart.get(i).getId().isEmpty()
-      @           && cart.get(i).getQty() >= 0
-      @           && cart.get(i).getCost() >= 0);
-      @   assignable \everything;
-      @   ensures available;
-      @*/
+
     public void saveCartToDatabase(String userEmail, List<ProdottoBean> cart) throws SQLException {
         String insertCartQuery = "INSERT INTO Carrello (cliente_email) VALUES (?) " +
                 "ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)";
@@ -359,15 +286,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires userEmail != null && !userEmail.isEmpty();
-      @   assignable \everything;
-      @   ensures \result != null
-      @        && (\forall int i; 0 <= i && i < \result.size();
-      @              \result.get(i) != null
-      @           && \result.get(i).getId() != null && !\result.get(i).getId().isEmpty()
-      @           && \result.get(i).getQty() >= 0);
-      @*/
+
     public List<ProdottoBean> getCartByUserEmail(String userEmail) throws SQLException {
         List<ProdottoBean> cart = new ArrayList<>();
         String query = "SELECT p.id, p.name, p.pieces_in_stock, p.cost, pc.quantity " +
@@ -396,13 +315,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
         return cart;
     }
 
-    /*@ public normal_behavior
-      @   requires userEmail != null && !userEmail.isEmpty()
-      @        && productId != null && !productId.isEmpty()
-      @        && qty >= 0;
-      @   assignable \everything;
-      @   ensures available;
-      @*/
+
     @Override
     public void updateCartProductQuantityInDatabase(String userEmail, String productId, int qty) throws SQLException {
         String query = """
@@ -426,12 +339,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
 
-    /*@ public normal_behavior
-      @   requires userEmail != null && !userEmail.isEmpty()
-      @        && productId != null && !productId.isEmpty();
-      @   assignable \everything;
-      @   ensures available;
-      @*/
+
     @Override
     public void removeProductFromCart(String userEmail, String productId) throws SQLException {
         String query = """
@@ -454,11 +362,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
 
 
     @Override
-    /*@ public normal_behavior
-      @   requires id != null && !id.isEmpty();
-      @   assignable \everything;
-      @   ensures available;
-      @*/
+
     public void deleteProductById(String id) throws SQLException {
         String deleteProductQuery = "DELETE FROM Prodotto WHERE id = ?";
         String deleteFromCartQuery = "DELETE FROM ProdottoCarrello WHERE prodotto_id = ?";
@@ -479,16 +383,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires prodottoBean != null
-      @        && prodottoBean.getId() != null && !prodottoBean.getId().isEmpty()
-      @        && prodottoBean.getName() != null && !prodottoBean.getName().isEmpty()
-      @        && prodottoBean.getBrand() != null && !prodottoBean.getBrand().isEmpty()
-      @        && prodottoBean.getCost() >= 0
-      @        && prodottoBean.getPiecesInStock() >= 0;
-      @   assignable \everything;
-      @   ensures \result ==> true;
-      @*/
+
     public boolean updateProduct(ProdottoBean prodottoBean) {
         String queryProdotto =
                 "UPDATE Prodotto SET name = ?, cost = ?, brand = ?, figure = ?, pieces_in_stock = ?, img = ?, description = ? WHERE id = ?";
@@ -524,12 +419,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
     }
 
 
-    /*@ public normal_behavior
-      @   requires productId != null && !productId.isEmpty()
-      @        && quantity >= 0;
-      @   assignable \everything;
-      @   ensures available;
-      @*/
+
     public void updateStock(String productId, int quantity) throws SQLException {
         String query = "UPDATE Prodotto SET pieces_in_stock = CASE WHEN ? <= 0 THEN 10 ELSE ? END WHERE id = ?";
 
@@ -544,12 +434,7 @@ public class ProdottoDAOImpl implements ProdottoDAO {
         }
     }
 
-    /*@ public normal_behavior
-      @   requires productId1 != null && !productId1.isEmpty()
-      @        && productId2 != null && !productId2.isEmpty();
-      @   assignable \everything;
-      @   ensures \result ==> true || !\result;
-      @*/
+
     public boolean isAssociatedWith(String productId1, String productId2) throws SQLException {
         String query = "SELECT COUNT(*) FROM ProductAssociations WHERE product_id_1 = ? AND product_id_2 = ?";
 

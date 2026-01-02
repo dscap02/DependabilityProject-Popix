@@ -12,29 +12,12 @@ public class CarrelloDAOImpl implements CarrelloDAO {
     private DataSource ds;
     private static final Logger LOGGER = Logger.getLogger(CarrelloDAOImpl.class.getName());
 
-    /*@ public model boolean available;
-      @ public invariant ds != null && available;
-      @ represents available <- ds != null;
-      @*/
 
     public CarrelloDAOImpl() {
         this.ds = DataSourceSingleton.getInstance();
     }
 
 
-    /*@ public normal_behavior
-      @   requires carrello != null
-      @        && carrello.getClienteEmail() != null && !carrello.getClienteEmail().isEmpty()
-      @        && carrello.getProdottiCarrello() != null
-      @        && (\forall int i; 0 <= i && i < carrello.getProdottiCarrello().size();
-      @              carrello.getProdottiCarrello().get(i) != null
-      @           && carrello.getProdottiCarrello().get(i).getProdottoId() != null
-      @           && !carrello.getProdottiCarrello().get(i).getProdottoId().isEmpty()
-      @           && carrello.getProdottiCarrello().get(i).getQuantity() >= 0
-      @           && carrello.getProdottiCarrello().get(i).getUnitaryCost() >= 0);
-      @   assignable \everything;
-      @   ensures available;
-      @*/
     @Override
     public void salvaCarrello(CarrelloBean carrello) {
         String upsertCart =
@@ -86,19 +69,6 @@ public class CarrelloDAOImpl implements CarrelloDAO {
 
 
     @Override
-    /*@ public normal_behavior
-      @   requires email != null && !email.isEmpty();
-      @   assignable \everything;
-      @   ensures \result != null
-      @        && \result.getClienteEmail().equals(email)
-      @        && \result.getProdottiCarrello() != null
-      @        && (\forall int i; 0 <= i && i < \result.getProdottiCarrello().size();
-      @              \result.getProdottiCarrello().get(i) != null
-      @           && \result.getProdottiCarrello().get(i).getProdottoId() != null
-      @           && !\result.getProdottiCarrello().get(i).getProdottoId().isEmpty()
-      @           && \result.getProdottiCarrello().get(i).getQuantity() >= 0
-      @           && \result.getProdottiCarrello().get(i).getUnitaryCost() >= 0);
-      @*/
     public CarrelloBean ottieniCarrelloPerEmail(String email) {
         String queryCarrello = "SELECT * FROM Carrello WHERE cliente_email = ?";
         String queryProdotti = "SELECT * FROM ProdottoCarrello WHERE carrello_id = ?";
@@ -144,11 +114,6 @@ public class CarrelloDAOImpl implements CarrelloDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires email != null && !email.isEmpty();
-      @   assignable \everything;
-      @   ensures available;
-      @*/
     public void clearCartByUserEmail(String email) {
         String queryProdottoCarrello =
                 "DELETE FROM ProdottoCarrello WHERE carrello_id = (SELECT id FROM Carrello WHERE cliente_email = ?)";

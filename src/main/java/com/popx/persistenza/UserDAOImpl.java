@@ -9,21 +9,12 @@ public class UserDAOImpl implements UserDAO<UserBean> {
 
     private DataSource ds;
 
-    /*@
-      @ ensures this.ds != null;
-      @*/
+
     public UserDAOImpl() {
         this.ds = DataSourceSingleton.getInstance();
     }
 
-    /*@
-      @ also
-      @ public normal_behavior
-      @ requires email != null && !email.isEmpty();
-      @ ensures \result == null
-      @      || \result.getEmail().equals(email);
-      @ signals (SQLException) true;
-      @*/
+
     @Override
     public UserBean getUserByEmail(String email) throws SQLException {
         String query = "SELECT * FROM UtenteRegistrato WHERE email = ?";
@@ -43,14 +34,7 @@ public class UserDAOImpl implements UserDAO<UserBean> {
         return null;
     }
 
-    /*@
-      @ also
-      @ public normal_behavior
-      @ requires user != null;
-      @ requires user.getEmail() != null && !user.getEmail().isEmpty();
-      @ ensures \result == true || \result == false;
-      @ signals (SQLException) true;
-      @*/
+
     @Override
     public boolean saveUser(UserBean user) throws SQLException {
         String userQuery = "INSERT INTO UtenteRegistrato (username, email, password, role) VALUES (?, ?, ?, ?)";

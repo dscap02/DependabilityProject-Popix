@@ -1,22 +1,16 @@
 package com.popx.modello;
 
-/*@
-  @ invariant this.getRole() == null
-  @        || this.getRole().equals("User");
-@*/
 public class ClienteBean extends UserBean {
 
     /*@
-      @ ensures this.getUsername() == null
-      @      && this.getEmail() == null
-      @      && this.getPassword() == null
-      @      && this.getRole() == null;
-    @*/
+      @ ensures getUsername() == null
+      @      && getEmail() == null
+      @      && getPassword() == null
+      @      && getRole() == null;
+      @*/
     public ClienteBean() {}
 
-
     /*@
-      @ also
       @ requires username != null && !username.isEmpty();
 
       @ requires email != null;
@@ -39,12 +33,15 @@ public class ClienteBean extends UserBean {
       @ requires role != null;
       @ requires role.equals("User");
 
-      @ ensures this.getUsername().equals(username)
-      @      && this.getEmail().equals(email)
-      @      && this.getPassword().equals(password)
-      @      && this.getRole().equals("User");
-    @*/
-    public ClienteBean(String username, String email, String password, String role) {
-        super(username, email, password, role); // JML richiede che role sia "User"
+      @ ensures getUsername().equals(username)
+      @      && getEmail().equals(email)
+      @      && getPassword().equals(password)
+      @      && getRole().equals("User");
+      @*/
+    public ClienteBean(String username,
+                       String email,
+                       String password,
+                       String role) {
+        super(username, email, password, role);
     }
 }

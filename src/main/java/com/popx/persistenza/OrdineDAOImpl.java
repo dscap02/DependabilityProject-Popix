@@ -14,25 +14,14 @@ public class OrdineDAOImpl implements OrdineDAO {
     private DataSource ds;
     private static final Logger LOGGER = Logger.getLogger(OrdineDAOImpl.class.getName());
 
-    /*@ public model boolean available;
-      @ public invariant ds != null && available;
-      @ represents available <- ds != null;
-      @*/
+
 
     public OrdineDAOImpl() {
         this.ds = DataSourceSingleton.getInstance();
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires ordine != null
-      @        && ordine.getSubtotal() >= 0
-      @        && ordine.getCustomerEmail() != null && !ordine.getCustomerEmail().isEmpty()
-      @        && ordine.getStatus() != null && !ordine.getStatus().isEmpty()
-      @        && ordine.getDataOrdine() != null;
-      @   assignable \everything;
-      @   ensures \result ==> ordine.getId() > 0;
-      @*/
+
     public boolean insertOrdine(OrdineBean ordine) {
         String query = "INSERT INTO Ordine (subtotal, customer_email, status, data_ordine) VALUES (?, ?, ?, ?)";
 
@@ -63,11 +52,7 @@ public class OrdineDAOImpl implements OrdineDAO {
 
 
     @Override
-    /*@ public normal_behavior
-      @   requires id > 0;
-      @   assignable \everything;
-      @   ensures \result == null || \result.getId() == id;
-      @*/
+
     public OrdineBean getOrdineById(int id) {
         String query = "SELECT * FROM Ordine WHERE id = ?";
         OrdineBean ordine = null;
@@ -95,10 +80,7 @@ public class OrdineDAOImpl implements OrdineDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   assignable \everything;
-      @   ensures \result != null;
-      @*/
+
     public List<OrdineBean> getAllOrdini() {
         String query = "SELECT * FROM Ordine";
         List<OrdineBean> ordini = new ArrayList<>();
@@ -125,14 +107,7 @@ public class OrdineDAOImpl implements OrdineDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires clienteEmail != null && !clienteEmail.isEmpty();
-      @   assignable \everything;
-      @   ensures \result != null
-      @        && (\forall int i; 0 <= i && i < \result.size();
-      @              \result.get(i) != null
-      @           && clienteEmail.equals(\result.get(i).getCustomerEmail()));
-      @*/
+
     public List<OrdineBean> getOrdiniByCliente(String clienteEmail) {
         String query = "SELECT * FROM Ordine WHERE customer_email = ?";
         List<OrdineBean> ordini = new ArrayList<>();
@@ -161,11 +136,7 @@ public class OrdineDAOImpl implements OrdineDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires email != null && !email.isEmpty();
-      @   assignable \everything;
-      @   ensures \result >= 0;
-      @*/
+
     public int countOrdiniByCliente(String email) {
         int count = 0;
         try (Connection connection = ds.getConnection()) {
@@ -184,13 +155,7 @@ public class OrdineDAOImpl implements OrdineDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires email != null && !email.isEmpty()
-      @        && currentPage >= 1
-      @        && itemsPerPage > 0;
-      @   assignable \everything;
-      @   ensures \result != null && \result.size() <= itemsPerPage;
-      @*/
+
     public List<OrdineBean> getOrdiniByClientePaginati(String email, int currentPage, int itemsPerPage) {
         List<OrdineBean> ordini = new ArrayList<>();
         try (Connection connection = ds.getConnection()) {
@@ -217,11 +182,7 @@ public class OrdineDAOImpl implements OrdineDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires currentPage >= 1 && recordsPerPage > 0;
-      @   assignable \everything;
-      @   ensures \result != null && \result.size() <= recordsPerPage;
-      @*/
+
     public List<OrdineBean> getOrdiniPaginati(int currentPage, int recordsPerPage) {
         List<OrdineBean> ordini = new ArrayList<>();
         String query = "SELECT * FROM Ordine LIMIT ? OFFSET ?";
@@ -251,10 +212,6 @@ public class OrdineDAOImpl implements OrdineDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   assignable \everything;
-      @   ensures \result >= 0;
-      @*/
     public int countTuttiOrdini() {
         int count = 0;
         String query = "SELECT COUNT(*) FROM Ordine";
@@ -274,13 +231,7 @@ public class OrdineDAOImpl implements OrdineDAO {
     }
 
     @Override
-    /*@ public normal_behavior
-      @   requires ordineBean != null
-      @        && ordineBean.getId() > 0
-      @        && ordineBean.getStatus() != null && !ordineBean.getStatus().isEmpty();
-      @   assignable \everything;
-      @   ensures \result ==> true;
-      @*/
+
     public boolean updateStatus(OrdineBean ordineBean) {
         String sql = "UPDATE Ordine SET status = ? WHERE id = ?";
         try (Connection conn = ds.getConnection();

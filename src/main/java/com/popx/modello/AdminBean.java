@@ -1,23 +1,16 @@
 package com.popx.modello;
 
-/*@
-  @ invariant this.getRole() == null
-  @        || this.getRole().equals("Admin");
-@*/
 public class AdminBean extends UserBean {
 
     /*@
-     @ ensures this.getUsername() == null
-     @      && this.getEmail() == null
-     @      && this.getPassword() == null
-     @      && this.getRole() == null;
-
-     */
-
+      @ ensures getUsername() == null
+      @      && getEmail() == null
+      @      && getPassword() == null
+      @      && getRole() == null;
+      @*/
     public AdminBean() {}
 
     /*@
-      @ also
       @ requires username != null && !username.isEmpty();
 
       @ requires email != null;
@@ -40,13 +33,15 @@ public class AdminBean extends UserBean {
       @ requires role != null;
       @ requires role.equals("Admin");
 
-      @ ensures this.getUsername().equals(username)
-      @      && this.getEmail().equals(email)
-      @      && this.getPassword().equals(password)
-      @      && this.getRole().equals("Admin");
-    @*/
-    public AdminBean(String username, String email, String password, String role) {
+      @ ensures getUsername().equals(username)
+      @      && getEmail().equals(email)
+      @      && getPassword().equals(password)
+      @      && getRole().equals("Admin");
+      @*/
+    public AdminBean(String username,
+                     String email,
+                     String password,
+                     String role) {
         super(username, email, password, role);
     }
-
 }

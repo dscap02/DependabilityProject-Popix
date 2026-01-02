@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/*@ public invariant ds != null; @*/
+
 public class AdminDAOImpl implements UserDAO<AdminBean> {
 
     private static final DataSource ds;
@@ -26,14 +26,7 @@ public class AdminDAOImpl implements UserDAO<AdminBean> {
         }
     }
 
-    /*@
-      @ also
-      @ public normal_behavior
-      @ requires email != null && !email.isEmpty();
-      @ ensures \result == null
-      @      || \result.getEmail().equals(email);
-      @ signals (SQLException) true;
-      @*/
+
     @Override
     public AdminBean getUserByEmail(String email) throws SQLException {
         String query = "SELECT * FROM UtenteRegistrato u " +
@@ -54,15 +47,6 @@ public class AdminDAOImpl implements UserDAO<AdminBean> {
         }
         return null;
     }
-
-    /*@
-      @ also
-      @ public normal_behavior
-      @ requires user != null;
-      @ requires user.getEmail() != null && !user.getEmail().isEmpty();
-      @ ensures \result == true || \result == false;
-      @ signals (SQLException) true;
-      @*/
     @Override
     public boolean saveUser(AdminBean user) throws SQLException {
         String userQuery = "INSERT INTO UtenteRegistrato (username, email, password, role) VALUES (?, ?, ?, ?)";

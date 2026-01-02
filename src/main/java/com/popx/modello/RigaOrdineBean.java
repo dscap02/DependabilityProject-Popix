@@ -2,14 +2,15 @@ package com.popx.modello;
 
 import java.io.Serializable;
 
-/*@
-  @ public invariant ordineId >= 0;
-  @ public invariant prodottoId == null
-  @                 || !prodottoId.isEmpty();
-  @ public invariant quantity >= 0;
-  @ public invariant unitaryCost >= 0;
-@*/
 public class RigaOrdineBean implements Serializable {
+
+    //@ invariant ordineId >= 0;
+
+    //@ invariant prodottoId == null || !prodottoId.isEmpty();
+
+    //@ invariant quantity >= 0;
+
+    //@ invariant unitaryCost >= 0;
 
     private int ordineId;
     private String prodottoId;
@@ -17,11 +18,11 @@ public class RigaOrdineBean implements Serializable {
     private float unitaryCost;
 
     /*@
-      @ ensures this.ordineId == 0;
-      @ ensures this.prodottoId == null;
-      @ ensures this.quantity == 0;
-      @ ensures this.unitaryCost == 0.0f;
-    @*/
+      @ ensures ordineId == 0;
+      @ ensures prodottoId == null;
+      @ ensures quantity == 0;
+      @ ensures unitaryCost == 0.0f;
+      @*/
     public RigaOrdineBean() {}
 
     /*@
@@ -33,8 +34,11 @@ public class RigaOrdineBean implements Serializable {
       @ ensures this.prodottoId == prodottoId;
       @ ensures this.quantity == quantity;
       @ ensures this.unitaryCost == unitaryCost;
-    @*/
-    public RigaOrdineBean(int ordineId, String prodottoId, int quantity, float unitaryCost) {
+      @*/
+    public RigaOrdineBean(int ordineId,
+                          String prodottoId,
+                          int quantity,
+                          float unitaryCost) {
         this.ordineId = ordineId;
         this.prodottoId = prodottoId;
         this.quantity = quantity;
@@ -49,7 +53,7 @@ public class RigaOrdineBean implements Serializable {
     /*@
       @ requires ordineId >= 0;
       @ ensures this.ordineId == ordineId;
-    @*/
+      @*/
     public void setOrdineId(int ordineId) {
         this.ordineId = ordineId;
     }
@@ -62,7 +66,7 @@ public class RigaOrdineBean implements Serializable {
     /*@
       @ requires prodottoId != null && !prodottoId.isEmpty();
       @ ensures this.prodottoId == prodottoId;
-    @*/
+      @*/
     public void setProdottoId(String prodottoId) {
         this.prodottoId = prodottoId;
     }
@@ -75,7 +79,7 @@ public class RigaOrdineBean implements Serializable {
     /*@
       @ requires quantity >= 0;
       @ ensures this.quantity == quantity;
-    @*/
+      @*/
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
@@ -88,7 +92,7 @@ public class RigaOrdineBean implements Serializable {
     /*@
       @ requires unitaryCost >= 0;
       @ ensures this.unitaryCost == unitaryCost;
-    @*/
+      @*/
     public void setUnitaryCost(float unitaryCost) {
         this.unitaryCost = unitaryCost;
     }
